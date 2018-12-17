@@ -1,29 +1,37 @@
 from tkinter import *
 from tkinter import messagebox
 from app.View.MainView import *
-from socket_thread.SocketThread import *
+from app.SocketConnector import *
+from app.Joystick import *
+
+REFRESH_RATE = 50
 
 
 class Controller:
     def __init__(self):
         self.app = Tk()
         self.app.resizable(width=False, height=False)
-        self.app.geometry("1000x700")
+        self.app.wm_title("Rover Ground Station")
+        self.app.wm_iconname("Rover Ground Station")
+        self.app.geometry("900x700")
         self.app.configure(background="#282828")
 
         self.mainView = MainView(self.app, self)
         self.mainView.pack()
 
-        self.socket_thread = SocketThread(self)
-        #self.socket_thread.start()
+        self.socket_connector = SocketConnector(self)
 
-        self.app.bind("<Up>", self.upPressed)
+        self.joystick = Joystick(self)
+        self.joystick.processEvent()
+
+        '''self.app.bind("<Up>", self.upPressed)
         self.app.bind("<Down>", self.downPressed)
         self.app.bind("<Left>", self.leftPressed)
         self.app.bind("<Right>", self.rightPressed)
 
         self.app.bind("<space>", self.shiftPressed)
-
+        self.app.bind("o", self.oPressed)
+        self.app.bind("p", self.pPressed)'''
 
         self.updateData()
 
@@ -31,36 +39,68 @@ class Controller:
         self.app.mainloop()
 
     def updateData(self):
-        self.socket_thread.getData()
-        self.app.after(500, self.updateData)
+        self.socket_connector.getData()
+        self.app.after(REFRESH_RATE, self.updateData)
 
     def showCheckConnectionDialog(self):
         messagebox.showerror(
             "Errore Connessione",
-            "Controllare la connessione e premere ok per riprovare"
+            "Assicurarsi di essere connessi alla rete WiFi del rover!"
         )
 
-    def shiftPressed(self, event):
-        self.socket_thread.sendCommand("X")
-        print("X")
-         
-    def upPressed(self, event):
-        self.socket_thread.sendCommand("W")
-
-    def downPressed(self, event):
-        self.socket_thread.sendCommand("S")
-        print("downPressed")
-
-    def leftPressed(self, event):
-        self.socket_thread.sendCommand("A")
-        print("leftPressed")
-
-    def rightPressed(self, event):
-        self.socket_thread.sendCommand("D")
-        print("rightPressed")
-
-    def keyboardController(self, key):
-        pass
+    def showCheckControllerDialog(self):
+        messagebox.showerror(
+            "Controller non Connesso",
+            "Collegare un Controller!"
+        )
 
     def updateRadar(self, distance_vector):
         self.mainView.updateRadar(distance_vector)
+
+    def updateMotorData(self, motor_data):
+        self.mainView.updateMotorData(motor_data)
+
+    def goForward(self):
+        print("W")
+        self.socket_connector.sendCommand("W")
+
+    def goBackward(self):
+        self.socket_connector.sendCommand("S")
+
+    def goLeft(self):
+        self.socket_connector.sendCommand("A")
+
+    def goRight(self):
+        self.socket_connector.sendCommand("D")
+
+    def stop(self):
+        print("X")
+        self.socket_connector.sendCommand("X")
+
+    def upSpeed(self):
+        self.socket_connector.sendCommand("P")
+
+    def downSpeed(self):
+        self.socket_connector.sendCommand("O")
+
+    # Handle keyboard mode command
+    def upPressed(self, event):
+        self.goForward()
+
+    def downPressed(self, event):
+        self.goBackward()
+
+    def leftPressed(self, event):
+        self.goLeft()
+
+    def rightPressed(self, event):
+        self.goRight
+
+    def shiftPressed(self, event):
+        self.stop()
+
+    def oPressed(self, event):
+        self.downSpeed()
+
+    def pPressed(self, event):
+        self.upSpeed()

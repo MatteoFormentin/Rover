@@ -3,19 +3,14 @@ from tkinter import *
 CANVAS_WIDTH = 300
 CANVAS_HEIGHT = 300
 
-PADDING_LEFT = 20
-PADDING_TOP = 50
-
-RANGE = 1024 / 7
-
 
 class Radar(Canvas):
     def __init__(self, master):
         super().__init__(master, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, background="#282828", borderwidth=0,
-                         highlightthickness=1)
+                         highlightthickness=0)
 
         range_xy = 10, 40, 290, 320
-        
+
         r_one = 100
         xy_one = 10+r_one, 40+r_one, 290-r_one, 320-r_one
 
@@ -98,25 +93,28 @@ class Radar(Canvas):
         self.rover = self.create_rectangle(rover_xy, fill="orange")
 
         #self.update([0, 11, 21, 31, 41, 31])
-        #self.reset()
+        # self.reset()
 
     # NOTE: Distance array are from right (0°) to left (180°) view from back to front
     def update(self, distance_vector):
         self.reset()
         for i in range(0, 6):
-            if distance_vector[i] in range(30, 40):
+
+            d = distance_vector[i]
+
+            if 30 <= d < 40:
                 self.itemconfig(self.sector[0][i], fill="red")
 
-            if distance_vector[i] in range(20, 30):
+            if 20 <= d < 30:
                 self.itemconfig(self.sector[0][i], fill="red")
                 self.itemconfig(self.sector[1][i], fill="red")
 
-            if distance_vector[i] in range(10, 20):
+            if 10 <= d < 20:
                 self.itemconfig(self.sector[0][i], fill="red")
                 self.itemconfig(self.sector[1][i], fill="red")
                 self.itemconfig(self.sector[2][i], fill="red")
 
-            if distance_vector[i] in range(0, 10):
+            if 0 <= d <= 10:
                 self.itemconfig(self.sector[0][i], fill="red")
                 self.itemconfig(self.sector[1][i], fill="red")
                 self.itemconfig(self.sector[2][i], fill="red")

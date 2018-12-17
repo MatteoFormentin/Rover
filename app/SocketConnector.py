@@ -4,30 +4,24 @@ import json
 import socket
 import sys
 
-HOST = '10.0.0.123'    # The remote host
-PORT = 8080              # The same port as used by the server
-
-# NOTE: Data are exchanged ONLY in JSON format
+HOST = '192.168.0.1'
+PORT = 8080
 
 
-class SocketThread(threading.Thread):
+class SocketConnector():
     def __init__(self, controller):
-        threading.Thread.__init__(self)
-        self.name = "SocketThread"
         self.state = None
-
         self.controller = controller
 
         self.rover_socket = None
         self.connectToRover()
-        print("connesso")
 
         self.last_command = None
 
-    def run(self):
+    '''def run(self):
         self.state = True
         while self.state is True:
-            pass
+            pass'''
 
     def stop(self):
         self.close()
@@ -37,19 +31,20 @@ class SocketThread(threading.Thread):
         connected = False
         while not connected:
             try:
+                print("provo a connettermi")
                 self.rover_socket = socket.socket(
                     socket.AF_INET, socket.SOCK_STREAM)
                 self.rover_socket.settimeout(2)
                 self.rover_socket.connect((HOST, PORT))
                 connected = True
                 self.connection_state = True
+                print("connesso")
             except (socket.timeout):
-                print("riprovo")
+                print("errore timeout")
                 connected = False
                 self.connection_state = False
                 self.controller.showCheckConnectionDialog()
             except OSError:
-                # TODO: Sostituire con finestra errore che chiede di verificare se rover acceso.
                 print("Rover non acceso.")
                 self.controller.showCheckConnectionDialog()
 
@@ -59,13 +54,17 @@ class SocketThread(threading.Thread):
     def getData(self):
         try:
             self.rover_socket.sendall("U".encode('ASCII'))
-            data = self.rover_socket.recv(1024).decode('ASCII')
+            received = self.rover_socket.recv(1024).decode('ASCII')
 
-            if not len(data) == 0:
-                radar = json.loads(data)['radar']
-                print(radar)
-                print("data ok\n")
-                self.controller.updateRadar(radar)
+            if not len(received) == 0:
+                print(received)
+                data = json.loads(received)
+
+                self.controller.updateRadar(data["radar"])
+                self.controller.updateMotorData(data["motor"])
+
+        except json.JSONDecodeError:
+            pass
 
         except socket.timeout:
             print("Connessione chiusa")
@@ -73,14 +72,13 @@ class SocketThread(threading.Thread):
             self.connectToRover()
 
     def sendCommand(self, to_send):
-        if self.last_command == to_send:
+        '''if self.last_command == to_send:
             print("duplicate")
-            return
+            return'''
         try:
             self.rover_socket.sendall(to_send.encode('ASCII'))
             self.last_command = to_send
         except socket.timeout:
-            print("Connessione chiusa")
+            print("Connessione chiusa - Send command")
             self.connection_state = False
             self.connectToRover()
-        
