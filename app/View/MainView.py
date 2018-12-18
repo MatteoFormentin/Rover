@@ -16,9 +16,6 @@ class MainView(Frame):
         self.motor_data = MotorData(self)
         self.motor_data.grid(row=0, column=2)
 
-        self.angle = Angle(self)
-        self.angle.grid(row=0, column=0)
-
     def updateRadar(self, distance_vector):
         self.radar.update(distance_vector)
 

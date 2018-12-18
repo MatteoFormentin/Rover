@@ -11,7 +11,7 @@ class Angle(Canvas):
                          highlightthickness=1)
 
         self.pitch_line = None
-        self.createPitchLine(60)
+        #self.createPitchLine(60)
 
     def update(self, motor_data):
         pass

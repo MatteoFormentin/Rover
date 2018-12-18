@@ -57,7 +57,7 @@ class SocketConnector():
             received = self.rover_socket.recv(1024).decode('ASCII')
 
             if not len(received) == 0:
-                print(received)
+                # print(received)
                 data = json.loads(received)
 
                 self.controller.updateRadar(data["radar"])
