@@ -43,7 +43,7 @@ class SocketConnector():
                 print("errore timeout")
                 connected = False
                 self.connection_state = False
-                self.controller.showCheckConnectionDialog()
+                #self.controller.showCheckConnectionDialog()
             except OSError:
                 print("Rover non acceso.")
                 self.controller.showCheckConnectionDialog()
@@ -57,11 +57,13 @@ class SocketConnector():
             received = self.rover_socket.recv(1024).decode('ASCII')
 
             if not len(received) == 0:
-                # print(received)
+                print(received)
                 data = json.loads(received)
 
                 self.controller.updateRadar(data["radar"])
-                self.controller.updateMotorData(data["motor"])
+                self.controller.updateMotorData(data["motor"], data["battery"])
+                self.controller.updateGPSData(data["gps"])
+
 
         except json.JSONDecodeError:
             pass

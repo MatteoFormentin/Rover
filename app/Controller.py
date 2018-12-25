@@ -13,7 +13,7 @@ class Controller:
         self.app.resizable(width=False, height=False)
         self.app.wm_title("Rover Ground Station")
         self.app.wm_iconname("Rover Ground Station")
-        self.app.geometry("900x700")
+        self.app.geometry("900x700")  # 900x700
         self.app.configure(background="#282828")
 
         self.mainView = MainView(self.app, self)
@@ -21,8 +21,8 @@ class Controller:
 
         self.socket_connector = SocketConnector(self)
 
-        self.joystick = Joystick(self)
-        self.joystick.processEvent()
+        #self.joystick = Joystick(self)
+        #self.joystick.processEvent()
 
         '''self.app.bind("<Up>", self.upPressed)
         self.app.bind("<Down>", self.downPressed)
@@ -57,11 +57,13 @@ class Controller:
     def updateRadar(self, distance_vector):
         self.mainView.updateRadar(distance_vector)
 
-    def updateMotorData(self, motor_data):
-        self.mainView.updateMotorData(motor_data)
+    def updateMotorData(self, motor_data, battery):
+        self.mainView.updateMotorData(motor_data, battery)
+
+    def updateGPSData(self, gps_data):
+        self.mainView.updateGPSData(gps_data)
 
     def goForward(self):
-        print("W")
         self.socket_connector.sendCommand("W")
 
     def goBackward(self):
@@ -74,7 +76,6 @@ class Controller:
         self.socket_connector.sendCommand("D")
 
     def stop(self):
-        print("X")
         self.socket_connector.sendCommand("X")
 
     def upSpeed(self):

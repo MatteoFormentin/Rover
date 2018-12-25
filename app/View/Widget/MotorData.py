@@ -20,14 +20,19 @@ class MotorData(Canvas):
         self.right_throttle_label = self.create_text(
             (105, 105), text="Right: ", fill="white", font=("default", 30))
         self.right_throttle_value = self.create_text(
-            (105 + 90, 105), text="100%", fill="red", font=("default", 30))
+            (105 + 90, 105), text="N/A", fill="red", font=("default", 30))
 
         self.left_throttle_label = self.create_text(
             (95, 140), text="Left: ", fill="white", font=("default", 30))
         self.left_throttle_value = self.create_text(
-            (105 + 90, 140), text="100%", fill="red", font=("default", 30))
+            (105 + 90, 140), text="N/A", fill="red", font=("default", 30))
 
-    def update(self, motor_data):
+        self.battery_label = self.create_text(
+            (95, 175), text="Battery: ", fill="white", font=("default", 30))
+        self.battery_value = self.create_text(
+            (105 + 100, 175), text="N/A", fill="green", font=("default", 30))
+
+    def update(self, motor_data, battery):
 
         if motor_data["state"] == 0:
             self.itemconfig(self.state_value,
@@ -53,3 +58,5 @@ class MotorData(Canvas):
                         text=(str(motor_data["left_power"]) + "%"))
         self.itemconfig(self.right_throttle_value,
                         text=(str(motor_data["right_power"]) + "%"))
+        self.itemconfig(self.battery_value,
+                        text=(str(battery) + "V"))
