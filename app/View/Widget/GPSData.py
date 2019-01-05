@@ -42,7 +42,15 @@ class GPSData(Canvas):
             self.itemconfig(self.state_value,
                             text="Not Fix", fill="red")
         else:
+            self.itemconfig(self.state_value,
+                            text="Fix", fill="green")
             self.itemconfig(self.speed_value,
-                            text=(str(gps_data["speed"])))
-            #TODO: Aggiungere altri dati
+                            text=(str(gps_data["speed"]) + " Km/h"))
+            self.itemconfig(self.altitude_value,
+                            text=(str(gps_data["altitude"]) + " mslm"))
+            self.itemconfig(self.latitude_value,
+                            text=(str(gps_data["latitude"])))
+            self.itemconfig(self.longitude_value,
+                            text=(str(gps_data["longitude"])))
 
+            # TODO: Aggiungere altri dati

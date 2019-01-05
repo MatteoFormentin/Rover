@@ -21,8 +21,8 @@ class Controller:
 
         self.socket_connector = SocketConnector(self)
 
-        #self.joystick = Joystick(self)
-        #self.joystick.processEvent()
+        self.joystick = Joystick(self)
+        self.joystick.processEvent()
 
         '''self.app.bind("<Up>", self.upPressed)
         self.app.bind("<Down>", self.downPressed)
