@@ -14,9 +14,9 @@ class SocketConnector():
         self.controller = controller
 
         self.rover_socket = None
-        self.connectToRover()
 
         self.last_command = None
+        self.connection_state = False
 
     '''def run(self):
         self.state = True
@@ -43,7 +43,7 @@ class SocketConnector():
                 print("errore timeout")
                 connected = False
                 self.connection_state = False
-                #self.controller.showCheckConnectionDialog()
+                self.controller.showCheckConnectionDialog()
             except OSError:
                 print("Rover non acceso.")
                 self.controller.showCheckConnectionDialog()
@@ -59,21 +59,21 @@ class SocketConnector():
             if not len(received) == 0:
                 print(received)
                 data = json.loads(received)
-
                 self.controller.updateRadar(data["radar"])
                 self.controller.updateMotorData(data["motor"], data["battery"])
                 self.controller.updateGPSData(data["gps"])
-
-
-        except json.JSONDecodeError:
-            pass
 
         except socket.timeout:
             print("Connessione chiusa")
             self.connection_state = False
             self.connectToRover()
 
+        except:
+            pass
+
     def sendCommand(self, to_send):
+        if not self.connection_state:
+            return
         '''if self.last_command == to_send:
             print("duplicate")
             return'''

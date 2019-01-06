@@ -9,6 +9,7 @@ class Joystick():
 
         while pygame.joystick.get_count() < 1:
             self.controller.showCheckControllerDialog()
+            pygame.joystick.quit()
             pygame.joystick.init()
 
         pygame.joystick.Joystick(0).init()
@@ -57,5 +58,11 @@ class Joystick():
                     self.controller.upSpeed()
                 if event.button == 4:
                     self.controller.downSpeed()
+                if event.button == 0:
+                    self.controller.ringBuzzer()
+
+            if event.type == pygame.JOYBUTTONUP:
+                if event.button == 0:
+                    self.controller.stopBuzzer()
 
         self.controller.app.after(1, self.processEvent)

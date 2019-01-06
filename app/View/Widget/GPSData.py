@@ -41,16 +41,38 @@ class GPSData(Canvas):
         if gps_data["state"] == 0:
             self.itemconfig(self.state_value,
                             text="Not Fix", fill="red")
+            self.itemconfig(self.speed_value,
+                            text="N/A", fill="red")
+            self.itemconfig(self.altitude_value,
+                            text="N/A", fill="red")
+            self.itemconfig(self.latitude_value,
+                            text="N/A", fill="red")
+            self.itemconfig(self.longitude_value,
+                            text="N/A", fill="red")
+
         else:
             self.itemconfig(self.state_value,
                             text="Fix", fill="green")
             self.itemconfig(self.speed_value,
-                            text=(str(gps_data["speed"]) + " Km/h"))
+                            text=(str(gps_data["speed"]*1.8) + " Km/h"))
             self.itemconfig(self.altitude_value,
                             text=(str(gps_data["altitude"]) + " mslm"))
             self.itemconfig(self.latitude_value,
-                            text=(str(gps_data["latitude"])))
+                            text=(str(self.parseLat(gps_data["latitude"]))))
             self.itemconfig(self.longitude_value,
-                            text=(str(gps_data["longitude"])))
+                            text=(str(self.parseLon(gps_data["longitude"]))))
 
-            # TODO: Aggiungere altri dati
+    # COORD:
+    # Lat: DDMM.MMMM
+    # Lon: DDDMM.MMMM
+    # Speed is in knot
+
+    def parseLat(self, coord):
+        deg = int(coord[0:1])
+        deg += float(coord[2:-1])/60
+        return deg
+
+    def parseLon(self, coord):
+        deg = int(coord[0:2])
+        deg += float(coord[3:-1])/60
+        return deg

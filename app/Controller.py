@@ -24,6 +24,8 @@ class Controller:
         self.joystick = Joystick(self)
         self.joystick.processEvent()
 
+        self.socket_connector.connectToRover()
+
         '''self.app.bind("<Up>", self.upPressed)
         self.app.bind("<Down>", self.downPressed)
         self.app.bind("<Left>", self.leftPressed)
@@ -84,7 +86,14 @@ class Controller:
     def downSpeed(self):
         self.socket_connector.sendCommand("O")
 
+    def ringBuzzer(self):
+        self.socket_connector.sendCommand("K")
+
+    def stopBuzzer(self):
+        self.socket_connector.sendCommand("L")
+
     # Handle keyboard mode command
+
     def upPressed(self, event):
         self.goForward()
 
