@@ -20,7 +20,7 @@ class GPSData(Canvas):
         self.speed_label = self.create_text(
             (105, 105), text="Speed: ", fill="white", font=("default", 30))
         self.speed_value = self.create_text(
-            (105 + 90, 105), text="N/A", fill="red", font=("default", 30))
+            (105 + 120, 105), text="N/A", fill="red", font=("default", 30))
 
         self.altitude_label = self.create_text(
             (95, 140), text="Alt: ", fill="white", font=("default", 30))
@@ -38,6 +38,7 @@ class GPSData(Canvas):
             (105 + 100, 210), text="N/A", fill="green", font=("default", 30))
 
     def update(self, gps_data):
+        # print(gps_data)
         if gps_data["state"] == 0:
             self.itemconfig(self.state_value,
                             text="Not Fix", fill="red")
@@ -54,25 +55,31 @@ class GPSData(Canvas):
             self.itemconfig(self.state_value,
                             text="Fix", fill="green")
             self.itemconfig(self.speed_value,
-                            text=(str(gps_data["speed"]*1.8) + " Km/h"))
+                            text=(
+                                str(round(gps_data["speed"]*1.8, 1)) + " Km/h"))
             self.itemconfig(self.altitude_value,
                             text=(str(gps_data["altitude"]) + " mslm"))
             self.itemconfig(self.latitude_value,
-                            text=(str(self.parseLat(gps_data["latitude"]))))
+                            text=(str(round(self.parseCoord(gps_data["latitude"]), 3))))
             self.itemconfig(self.longitude_value,
-                            text=(str(self.parseLon(gps_data["longitude"]))))
+                            text=(str(round(self.parseCoord(gps_data["longitude"]), 3))))
 
     # COORD:
     # Lat: DDMM.MMMM
     # Lon: DDDMM.MMMM
     # Speed is in knot
 
-    def parseLat(self, coord):
-        deg = int(coord[0:1])
-        deg += float(coord[2:-1])/60
-        return deg
-
-    def parseLon(self, coord):
-        deg = int(coord[0:2])
-        deg += float(coord[3:-1])/60
-        return deg
+    def parseCoord(self, coord):
+        coord = str(coord)
+        splitted = coord.split(".")
+        integer = splitted[0]
+        if(len(integer) == 1 or len(integer) == 2):
+            return
+        if(len(integer) == 3):
+            integer = "00" + integer
+        if(len(integer) == 4):
+            integer = "0" + integer
+        minute = float(integer[3:]) + float("0." + splitted[1])
+        deg = int(integer[0:3])
+        val = deg + minute/60
+        return val

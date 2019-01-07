@@ -59,4 +59,4 @@ class MotorData(Canvas):
         self.itemconfig(self.right_throttle_value,
                         text=(str(motor_data["right_power"]) + "%"))
         self.itemconfig(self.battery_value,
-                        text=(str(battery) + "V"))
+                        text=(str(round(battery, 1)) + "V"))

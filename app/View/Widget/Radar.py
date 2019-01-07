@@ -106,7 +106,7 @@ class Radar(Canvas):
 
             d = distance_vector[i]
 
-            if 80 <= d <= 100:
+            if 80 <= d < 100:
                 self.itemconfig(self.sector[0][i], fill="red")
 
             if 60 <= d < 80:

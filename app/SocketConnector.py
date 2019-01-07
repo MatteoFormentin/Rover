@@ -34,7 +34,7 @@ class SocketConnector():
                 print("provo a connettermi")
                 self.rover_socket = socket.socket(
                     socket.AF_INET, socket.SOCK_STREAM)
-                self.rover_socket.settimeout(2)
+                self.rover_socket.settimeout(5)
                 self.rover_socket.connect((HOST, PORT))
                 connected = True
                 self.connection_state = True
@@ -84,3 +84,6 @@ class SocketConnector():
             print("Connessione chiusa - Send command")
             self.connection_state = False
             self.connectToRover()
+
+        except:
+            pass
