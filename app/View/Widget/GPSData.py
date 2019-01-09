@@ -55,8 +55,7 @@ class GPSData(Canvas):
             self.itemconfig(self.state_value,
                             text="Fix", fill="green")
             self.itemconfig(self.speed_value,
-                            text=(
-                                str(round(gps_data["speed"]*1.8, 1)) + " Km/h"))
+                            text=(str(round(gps_data["speed"]*1.8, 1)) + " Km/h"))
             self.itemconfig(self.altitude_value,
                             text=(str(gps_data["altitude"]) + " mslm"))
             self.itemconfig(self.latitude_value,

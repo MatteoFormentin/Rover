@@ -62,6 +62,7 @@ class SocketConnector():
                 self.controller.updateRadar(data["radar"])
                 self.controller.updateMotorData(data["motor"], data["battery"])
                 self.controller.updateGPSData(data["gps"])
+                self.controller.updateCompass(data["compass"])
 
         except socket.timeout:
             print("Connessione chiusa")

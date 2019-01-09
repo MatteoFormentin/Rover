@@ -2,14 +2,13 @@ from app.View.Widget.Radar import *
 from app.View.Widget.MotorData import *
 from app.View.Widget.Angle import *
 from app.View.Widget.GPSData import *
+from app.View.Widget.Compass import *
 
 
 class MainView(Frame):
     def __init__(self, master, controller):
         super().__init__(master)
         self.controller = controller
-
-        self.connection_state = 0
 
         self.radar = Radar(self)
         self.radar.grid(row=0, column=0)
@@ -20,6 +19,9 @@ class MainView(Frame):
         self.gps_data = GPSData(self)
         self.gps_data.grid(row=0, column=2)
 
+        self.compass = Compass(self)
+        self.compass.grid(row=1, column=0)
+
     def updateRadar(self, distance_vector):
         self.radar.update(distance_vector)
 
@@ -28,3 +30,6 @@ class MainView(Frame):
 
     def updateGPSData(self, gps_data):
         self.gps_data.update(gps_data)
+
+    def updateCompass(self, heading):
+        self.compass.updateHeading(heading)

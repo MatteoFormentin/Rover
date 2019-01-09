@@ -5,6 +5,8 @@ from app.SocketConnector import *
 from app.Joystick import *
 
 REFRESH_RATE = 50
+ENABLE_JOYSTCK = False
+ENABLE_NETWORK = False
 
 
 class Controller:
@@ -21,21 +23,22 @@ class Controller:
 
         self.socket_connector = SocketConnector(self)
 
-        self.joystick = Joystick(self)
-        self.joystick.processEvent()
+        if ENABLE_JOYSTCK:
+            self.joystick = Joystick(self)
+            self.joystick.processEvent()
+        else:
+            self.app.bind("<Up>", self.upPressed)
+            self.app.bind("<Down>", self.downPressed)
+            self.app.bind("<Left>", self.leftPressed)
+            self.app.bind("<Right>", self.rightPressed)
 
-        self.socket_connector.connectToRover()
+            self.app.bind("<space>", self.shiftPressed)
+            self.app.bind("o", self.oPressed)
+            self.app.bind("p", self.pPressed)
 
-        '''self.app.bind("<Up>", self.upPressed)
-        self.app.bind("<Down>", self.downPressed)
-        self.app.bind("<Left>", self.leftPressed)
-        self.app.bind("<Right>", self.rightPressed)
-
-        self.app.bind("<space>", self.shiftPressed)
-        self.app.bind("o", self.oPressed)
-        self.app.bind("p", self.pPressed)'''
-
-        self.updateData()
+        if(ENABLE_NETWORK):
+            self.socket_connector.connectToRover()
+            self.updateData()
 
     def run(self):
         self.app.mainloop()
@@ -64,6 +67,9 @@ class Controller:
 
     def updateGPSData(self, gps_data):
         self.mainView.updateGPSData(gps_data)
+
+    def updateCompass(self, heading):
+        self.mainView.updateCompass(heading)
 
     def goForward(self):
         self.socket_connector.sendCommand("W")
