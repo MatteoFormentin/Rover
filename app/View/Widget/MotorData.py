@@ -13,24 +13,23 @@ class MotorData(Canvas):
             (CANVAS_WIDTH/2, 30), text="MOTOR DATA", fill="white", font=("default", 30))
 
         self.state_label = self.create_text(
-            (105, 70), text="State: ", fill="white", font=("default", 30))
+            (140, 70), text="State: ", fill="white", font=("default", 30), anchor="e")
         self.state_value = self.create_text(
-            (105 + 90, 70), text="N/A", fill="red", font=("default", 30))
+            (140 + 90, 70), text="N/A", fill="red", font=("default", 30), anchor="e")
 
         self.right_throttle_label = self.create_text(
-            (105, 105), text="Right: ", fill="white", font=("default", 30))
+            (140, 105), text="Right: ", fill="white", font=("default", 30), anchor="e")
         self.right_throttle_value = self.create_text(
-            (105 + 90, 105), text="N/A", fill="red", font=("default", 30))
+            (140 + 90, 105), text="N/A", fill="red", font=("default", 30), anchor="e")
 
         self.left_throttle_label = self.create_text(
-            (95, 140), text="Left: ", fill="white", font=("default", 30))
+            (140, 140), text="Left: ", fill="white", font=("default", 30), anchor="e")
         self.left_throttle_value = self.create_text(
-            (105 + 90, 140), text="N/A", fill="red", font=("default", 30))
-
+            (140 + 90, 140), text="N/A", fill="red", font=("default", 30), anchor="e")
         self.battery_label = self.create_text(
-            (95, 175), text="Battery: ", fill="white", font=("default", 30))
+            (140, 175), text="Batt: ", fill="white", font=("default", 30), anchor="e")
         self.battery_value = self.create_text(
-            (105 + 100, 175), text="N/A", fill="green", font=("default", 30))
+            (140 + 90, 175), text="N/A", fill="red", font=("default", 30), anchor="e")
 
     def update(self, motor_data, battery):
 
@@ -60,3 +59,10 @@ class MotorData(Canvas):
                         text=(str(motor_data["right_power"]) + "%"))
         self.itemconfig(self.battery_value,
                         text=(str(round(battery, 1)) + "V"))
+
+        if battery > 10:
+            self.itemconfig(self.battery_value, fill="green")
+        elif 9.5 < battery <= 10:
+            self.itemconfig(self.battery_value, fill="orange")
+        elif battery <= 9.5:
+            self.itemconfig(self.battery_value, fill="red")

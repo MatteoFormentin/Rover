@@ -12,7 +12,7 @@ L = 150
 class Compass(Canvas):
     def __init__(self, master):
         super().__init__(master, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, background="#282828", borderwidth=0,
-                         highlightthickness=1)
+                         highlightthickness=0)
 
         self.filename = os.path.join(os.path.abspath(
             os.curdir), 'app/images/compass_background.jpg')
