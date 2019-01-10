@@ -15,7 +15,7 @@ class Controller:
         self.app.resizable(width=False, height=False)
         self.app.wm_title("Rover Ground Station")
         self.app.wm_iconname("Rover Ground Station")
-        self.app.geometry("900x700")  # 900x700
+        self.app.geometry("940x620")  # 900x700
         self.app.configure(background="#282828")
 
         self.mainView = MainView(self.app, self)
@@ -42,6 +42,7 @@ class Controller:
 
     def run(self):
         self.app.mainloop()
+        #except UnicodeDecodeError:
 
     def updateData(self):
         self.socket_connector.getData()

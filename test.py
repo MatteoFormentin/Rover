@@ -1,28 +1,25 @@
-import tkinter
+import matplotlib.pyplot as plt
+import numpy as np
 
-from matplotlib.backends.backend_tkagg import (
-    FigureCanvasTkAgg, NavigationToolbar2Tk)
-# Implement the default Matplotlib key bindings.
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.figure import Figure
+t = np.linspace(0.0, 2.0, 201)
+s = np.sin(2 * np.pi * t)
 
-gps_coord = {
-    "lat": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    "lon": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-}
+# 1) RGB tuple:
+fig, ax = plt.subplots(facecolor=(.18, .31, .31))
+# 2) hex string:
+ax.set_facecolor('red')
+# 3) gray level string:
+ax.set_title('Voltage vs. time chart', color='0.7')
+# 4) single letter color string
+ax.set_xlabel('time (s)', color='c')
+# 5) a named color:
+ax.set_ylabel('voltage (mV)', color='peachpuff')
+# 6) a named xkcd color:
+ax.plot(t, s, 'xkcd:crimson')
+# 7) Cn notation:
+ax.plot(t, .7*s, color='C4', linestyle='--')
+# 8) tab notation:
+ax.tick_params(labelcolor='tab:orange')
 
 
-fig = Figure(figsize=(5, 4), dpi=100)
-fig.add_subplot(111).plot(gps_coord["lat"], gps_coord["lon"])
-
-root = tkinter.Tk()
-root.wm_title("Embedding in Tk")
-
-canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
-canvas.draw()
-#canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
-
-#toolbar = NavigationToolbar2Tk(canvas, root)
-#toolbar.update()
-canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
-tkinter.mainloop()
+plt.show()

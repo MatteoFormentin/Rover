@@ -5,12 +5,14 @@ CANVAS_HEIGHT = 300
 
 
 class GPSData(Canvas):
-    def __init__(self, master):
+    def __init__(self, master, gps_plot):
         super().__init__(master, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, background="#282828", borderwidth=0,
                          highlightthickness=0)
 
+        self.gps_plot = gps_plot
+
         self.gps_label = self.create_text(
-            (CANVAS_WIDTH/2, 30), text="GPS DATA", fill="white", font=("default", 30))
+            (CANVAS_WIDTH/2, 30), text="GPS", fill="white", font=("default", 30))
 
         self.state_label = self.create_text(
             (140, 70), text="State: ", fill="white", font=("default", 30), anchor="e")
@@ -52,16 +54,17 @@ class GPSData(Canvas):
                             text="N/A", fill="red")
 
         else:
+            lat = self.parseCoord(gps_data["latitude"])
+            lon = self.parseCoord(gps_data["longitude"])
             self.itemconfig(self.state_value,
                             text="Fix", fill="green")
             self.itemconfig(self.speed_value,
                             text=(str(round(gps_data["speed"]*1.8, 1)) + " Km/h"))
             self.itemconfig(self.altitude_value,
                             text=(str(gps_data["altitude"]) + " mslm"))
-            self.itemconfig(self.latitude_value,
-                            text=(str(round(self.parseCoord(gps_data["latitude"]), 3))))
-            self.itemconfig(self.longitude_value,
-                            text=(str(round(self.parseCoord(gps_data["longitude"]), 3))))
+            self.itemconfig(self.latitude_value, text=(str(round(lat, 3))))
+            self.itemconfig(self.longitude_value, text=(str(round(lon, 3))))
+            self.gps_plot.updatePlot(lat, lon)
 
     # COORD:
     # Lat: DDMM.MMMM

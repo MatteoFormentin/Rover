@@ -14,19 +14,19 @@ class MainView(Frame):
         self.configure(background="#282828")
 
         self.radar = Radar(self)
-        self.radar.grid(row=0, column=0)
+        self.radar.grid(row=0, column=1)
 
         self.motor_data = MotorData(self)
-        self.motor_data.grid(row=0, column=1)
-
-        self.gps_data = GPSData(self)
-        self.gps_data.grid(row=0, column=2)
+        self.motor_data.grid(row=0, column=0)
 
         self.compass = Compass(self)
-        self.compass.grid(row=1, column=0)
+        self.compass.grid(row=0, column=2)
 
         self.gps_plot = GPSPlot(self)
-        self.gps_plot.canvas.get_tk_widget().grid(row=1, column=1)
+        self.gps_plot.canvas.get_tk_widget().grid(row=1, column=1, columnspan=2)
+
+        self.gps_data = GPSData(self, self.gps_plot)
+        self.gps_data.grid(row=1, column=0)
 
 
     def updateRadar(self, distance_vector):

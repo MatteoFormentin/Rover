@@ -10,7 +10,7 @@ class MotorData(Canvas):
                          highlightthickness=0)
 
         self.motor_data_label = self.create_text(
-            (CANVAS_WIDTH/2, 30), text="MOTOR DATA", fill="white", font=("default", 30))
+            (CANVAS_WIDTH/2, 30), text="MOTOR", fill="white", font=("default", 30))
 
         self.state_label = self.create_text(
             (140, 70), text="State: ", fill="white", font=("default", 30), anchor="e")

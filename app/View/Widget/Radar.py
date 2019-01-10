@@ -9,7 +9,7 @@ class Radar(Canvas):
         super().__init__(master, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, background="#282828", borderwidth=0,
                          highlightthickness=0)
 
-        range_xy = 10, 40, 290, 320
+        #range_xy = 10, 40, 290, 320
 
         r = 15
 

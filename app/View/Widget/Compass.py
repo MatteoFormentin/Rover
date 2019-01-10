@@ -23,7 +23,7 @@ class Compass(Canvas):
             CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, image=self.image)
 
         self.heading_label = self.create_text(
-            (280, 20), text="0°", fill="white", font=("default", 25), anchor="e")
+            (280, 20), text="0°", fill="white", font=("default", 30), anchor="e")
 
         self.arrow = None
         self.updateHeading(0)
