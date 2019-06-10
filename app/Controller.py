@@ -5,8 +5,8 @@ from app.SocketConnector import *
 from app.Joystick import *
 
 REFRESH_RATE = 50
-ENABLE_JOYSTCK = False
-ENABLE_NETWORK = False
+ENABLE_JOYSTCK = True
+ENABLE_NETWORK = True
 
 
 class Controller:
@@ -18,10 +18,10 @@ class Controller:
         self.app.geometry("940x620")  # 900x700
         self.app.configure(background="#282828")
 
-        self.mainView = MainView(self.app, self)
-        self.mainView.pack()
-
         self.socket_connector = SocketConnector(self)
+        if(ENABLE_NETWORK):
+            self.socket_connector.connectToRover()
+            self.updateData()
 
         if ENABLE_JOYSTCK:
             self.joystick = Joystick(self)
@@ -36,13 +36,12 @@ class Controller:
             self.app.bind("o", self.oPressed)
             self.app.bind("p", self.pPressed)
 
-        if(ENABLE_NETWORK):
-            self.socket_connector.connectToRover()
-            self.updateData()
+        self.mainView = MainView(self.app, self)
+        self.mainView.pack()
 
     def run(self):
         self.app.mainloop()
-        #except UnicodeDecodeError:
+        # except UnicodeDecodeError:
 
     def updateData(self):
         self.socket_connector.getData()

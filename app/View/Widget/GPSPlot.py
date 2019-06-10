@@ -26,7 +26,6 @@ class GPSPlot():
         self.ax1.set_facecolor("#282828")
         self.ax1.set_title("TRACK ROUTE", color="white")
 
-
         self.ax1.set_xlabel("Longitudine", color="white")
         self.ax1.set_ylabel("Latitudine", color="white")
         self.ax1.tick_params(labelcolor="white")

@@ -18,11 +18,6 @@ class SocketConnector():
         self.last_command = None
         self.connection_state = False
 
-    '''def run(self):
-        self.state = True
-        while self.state is True:
-            pass'''
-
     def stop(self):
         self.close()
         self.state = False
