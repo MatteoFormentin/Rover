@@ -52,12 +52,13 @@ class SocketConnector():
             received = self.rover_socket.recv(1024).decode('ASCII')
 
             if not len(received) == 0:
-                print(received)
+                #print(received)
                 data = json.loads(received)
                 self.controller.updateRadar(data["radar"])
                 self.controller.updateMotorData(data["motor"], data["battery"])
                 self.controller.updateGPSData(data["gps"])
                 self.controller.updateCompass(data["compass"])
+                self.controller.updateMode(data["mode"])
 
         except socket.timeout:
             print("Connessione chiusa")
@@ -65,7 +66,9 @@ class SocketConnector():
             self.connectToRover()
 
         except:
-            pass
+            print("Generic Error - get data")
+            self.connection_state = False
+            self.connectToRover()
 
     def sendCommand(self, to_send):
         if not self.connection_state:
@@ -82,4 +85,4 @@ class SocketConnector():
             self.connectToRover()
 
         except:
-            pass
+            print("Generic Error - Send command")

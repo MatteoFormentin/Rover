@@ -15,11 +15,11 @@ class Controller:
         self.app.resizable(width=False, height=False)
         self.app.wm_title("Rover Ground Station")
         self.app.wm_iconname("Rover Ground Station")
-        self.app.geometry("940x620")  # 900x700
+        self.app.geometry("1240x620")  # 900x700
         self.app.configure(background="#282828")
 
         self.socket_connector = SocketConnector(self)
-        if(ENABLE_NETWORK):
+        if ENABLE_NETWORK:
             self.socket_connector.connectToRover()
             self.updateData()
 
@@ -70,6 +70,16 @@ class Controller:
 
     def updateCompass(self, heading):
         self.mainView.updateCompass(heading)
+
+    def updateMode(self, mode):
+        self.mainView.updateMode(mode)
+
+    #COMMAND SEND
+    def setRemoteMode(self):
+        self.socket_connector.sendCommand("0")
+
+    def setAutoMode(self):
+        self.socket_connector.sendCommand("1")
 
     def goForward(self):
         self.socket_connector.sendCommand("W")
