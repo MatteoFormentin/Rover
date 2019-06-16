@@ -41,7 +41,7 @@ class Buttons(Frame):
 
             self.mode = mode
             if mode == 0:
-                self.status_label.config(text=("REMOTE MODE"))
+                self.status_label.config(text=("REMOTE MODE"), fg="green")
 
             if mode == 1:
-                self.status_label.config(text=("AUTO MODE"))
+                self.status_label.config(text=("AUTO MODE"), fg="orange")

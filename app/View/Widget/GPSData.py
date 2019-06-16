@@ -17,27 +17,27 @@ class GPSData(Canvas):
         self.state_label = self.create_text(
             (140, 70), text="State: ", fill="white", font=("default", 30), anchor="e")
         self.state_value = self.create_text(
-            (140 + 90, 70), text="N/A", fill="red", font=("default", 30), anchor="e")
+            (140 + 100, 70), text="N/A", fill="red", font=("default", 30), anchor="e")
 
         self.speed_label = self.create_text(
             (140, 105), text="Speed: ", fill="white", font=("default", 30), anchor="e")
         self.speed_value = self.create_text(
-            (140 + 90, 105), text="N/A", fill="red", font=("default", 30), anchor="e")
+            (140 + 100, 105), text="N/A", fill="red", font=("default", 30), anchor="e")
 
         self.altitude_label = self.create_text(
             (140, 140), text="Alt: ", fill="white", font=("default", 30), anchor="e")
         self.altitude_value = self.create_text(
-            (140 + 90, 140), text="N/A", fill="red", font=("default", 30), anchor="e")
+            (140 + 100, 140), text="N/A", fill="red", font=("default", 30), anchor="e")
 
         self.latitude_label = self.create_text(
             (140, 175), text="Lat: ", fill="white", font=("default", 30), anchor="e")
         self.latitude_value = self.create_text(
-            (140 + 90, 175), text="N/A", fill="red", font=("default", 30), anchor="e")
+            (140 + 100, 175), text="N/A", fill="red", font=("default", 30), anchor="e")
 
         self.longitude_label = self.create_text(
             (140, 210), text="Long: ", fill="white", font=("default", 30), anchor="e")
         self.longitude_value = self.create_text(
-            (140 + 90, 210), text="N/A", fill="red", font=("default", 30), anchor="e")
+            (140 + 100, 210), text="N/A", fill="red", font=("default", 30), anchor="e")
 
     def update(self, gps_data):
         # print(gps_data)
