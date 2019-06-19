@@ -46,29 +46,24 @@ class SocketConnector():
     def close(self):
         self.rover_socket.close()
 
-    def getData(self):
-        try:
-            self.rover_socket.sendall("U".encode('ASCII'))
-            received = self.rover_socket.recv(1024).decode('ASCII')
+    def getData(self, to_send):
 
-            if not len(received) == 0:
-                #print(received)
-                data = json.loads(received)
-                self.controller.updateRadar(data["radar"])
-                self.controller.updateMotorData(data["motor"], data["battery"])
-                self.controller.updateGPSData(data["gps"])
-                self.controller.updateCompass(data["compass"])
-                self.controller.updateMode(data["mode"])
+        try:
+            self.rover_socket.sendall(to_send)
+            received = self.rover_socket.recv(1024).decode('ASCII')
+            return received
 
         except socket.timeout:
             print("Connessione chiusa")
             self.connection_state = False
             self.connectToRover()
+            return ""
 
         except:
             print("Generic Error - get data")
             self.connection_state = False
             self.connectToRover()
+            return ""
 
     def sendCommand(self, to_send):
         if not self.connection_state:
@@ -77,7 +72,7 @@ class SocketConnector():
             print("duplicate")
             return'''
         try:
-            self.rover_socket.sendall(to_send.encode('ASCII'))
+            self.rover_socket.sendall(to_send)
             self.last_command = to_send
         except socket.timeout:
             print("Connessione chiusa - Send command")

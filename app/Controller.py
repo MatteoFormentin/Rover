@@ -3,6 +3,7 @@ from tkinter import messagebox
 from app.View.MainView import *
 from app.SocketConnector import *
 from app.Joystick import *
+import json
 
 REFRESH_RATE = 50
 ENABLE_JOYSTCK = True
@@ -18,6 +19,7 @@ class Controller:
         self.app.geometry("1240x620")  # 900x700
         self.app.configure(background="#282828")
 
+        self.mainView = MainView(self.app, self)
         self.socket_connector = SocketConnector(self)
         if ENABLE_NETWORK:
             self.socket_connector.connectToRover()
@@ -26,17 +28,7 @@ class Controller:
         if ENABLE_JOYSTCK:
             self.joystick = Joystick(self)
             self.joystick.processEvent()
-        else:
-            self.app.bind("<Up>", self.upPressed)
-            self.app.bind("<Down>", self.downPressed)
-            self.app.bind("<Left>", self.leftPressed)
-            self.app.bind("<Right>", self.rightPressed)
 
-            self.app.bind("<space>", self.shiftPressed)
-            self.app.bind("o", self.oPressed)
-            self.app.bind("p", self.pPressed)
-
-        self.mainView = MainView(self.app, self)
         self.mainView.pack()
 
     def run(self):
@@ -44,7 +36,17 @@ class Controller:
         # except UnicodeDecodeError:
 
     def updateData(self):
-        self.socket_connector.getData()
+        s = bytes([0x01, 0x00])
+        received = self.socket_connector.getData(s)
+        if not len(received) == 0:
+            print(received)
+            data = json.loads(received)
+            self.mainView.updateRadar(data["radar"])
+            self.mainView.updateMotorData(data["motor"], data["battery"])
+            self.mainView.updateGPSData(data["gps"])
+            self.mainView.updateCompass(data["compass"])
+            self.mainView.updateMode(data["mode"])
+
         self.app.after(REFRESH_RATE, self.updateData)
 
     def showCheckConnectionDialog(self):
@@ -59,74 +61,88 @@ class Controller:
             "Collegare un Controller!"
         )
 
-    def updateRadar(self, distance_vector):
-        self.mainView.updateRadar(distance_vector)
-
-    def updateMotorData(self, motor_data, battery):
-        self.mainView.updateMotorData(motor_data, battery)
-
-    def updateGPSData(self, gps_data):
-        self.mainView.updateGPSData(gps_data)
-
-    def updateCompass(self, heading):
-        self.mainView.updateCompass(heading)
-
-    def updateMode(self, mode):
-        self.mainView.updateMode(mode)
-
-    #COMMAND SEND
+    # COMMAND SEND
     def setRemoteMode(self):
-        self.socket_connector.sendCommand("0")
+        s = bytes([0x02, 0x00])
+        self.socket_connector.sendCommand(s)
 
     def setAutoMode(self):
-        self.socket_connector.sendCommand("1")
+        s = bytes([0x02, 0x01])
+        self.socket_connector.sendCommand(s)
 
-    def goForward(self):
-        self.socket_connector.sendCommand("W")
+    def goForward(self, speed):
+        # MOTOR1 (RIGHT) DIRECTION
+        s = bytes([0x10, 0x00])
+        self.socket_connector.sendCommand(s)
 
-    def goBackward(self):
-        self.socket_connector.sendCommand("S")
+        # MOTOR2 (LEFT) DIRECTION
+        s = bytes([0x11, 0x00])
+        self.socket_connector.sendCommand(s)
 
-    def goLeft(self):
-        self.socket_connector.sendCommand("A")
+        # MOTOR1 (RIGHT) POWER
+        s = bytes([0x12, speed])
+        self.socket_connector.sendCommand(s)
 
-    def goRight(self):
-        self.socket_connector.sendCommand("D")
+        # MOTOR2 (LEFT) POWER
+        s = bytes([0x13, speed])
+        self.socket_connector.sendCommand(s)
+
+    def goBackward(self, speed):
+        # MOTOR1 (RIGHT) DIRECTION
+        s = bytes([0x10, 0x01])
+        self.socket_connector.sendCommand(s)
+
+        # MOTOR2 (LEFT) DIRECTION
+        s = bytes([0x11, 0x01])
+        self.socket_connector.sendCommand(s)
+
+        # MOTOR1 (RIGHT) POWER
+        s = bytes([0x12, speed])
+        self.socket_connector.sendCommand(s)
+
+        # MOTOR2 (LEFT) POWER
+        s = bytes([0x13, speed])
+        self.socket_connector.sendCommand(s)
+
+    def goLeft(self, speed):
+        # MOTOR1 (RIGHT) DIRECTION
+        s = bytes([0x10, 0x00])
+        self.socket_connector.sendCommand(s)
+
+        # MOTOR2 (LEFT) DIRECTION
+        s = bytes([0x11, 0x01])
+        self.socket_connector.sendCommand(s)
+
+        # MOTOR1 (RIGHT) POWER
+        s = bytes([0x12, speed])
+        self.socket_connector.sendCommand(s)
+
+        # MOTOR2 (LEFT) POWER
+        s = bytes([0x13, speed])
+        self.socket_connector.sendCommand(s)
+
+    def goRight(self, speed):
+        # MOTOR1 (RIGHT) DIRECTION
+        s = bytes([0x10, 0x01])
+        self.socket_connector.sendCommand(s)
+
+        # MOTOR2 (LEFT) DIRECTION
+        s = bytes([0x11, 0x00])
+        self.socket_connector.sendCommand(s)
+
+        # MOTOR1 (RIGHT) POWER
+        s = bytes([0x12, speed])
+        self.socket_connector.sendCommand(s)
+
+        # MOTOR2 (LEFT) POWER
+        s = bytes([0x13, speed])
+        self.socket_connector.sendCommand(s)
 
     def stop(self):
-        self.socket_connector.sendCommand("X")
+        # MOTOR1 (RIGHT) POWER
+        s = bytes([0x00, 0])
+        self.socket_connector.sendCommand(s)
 
-    def upSpeed(self):
-        self.socket_connector.sendCommand("P")
-
-    def downSpeed(self):
-        self.socket_connector.sendCommand("O")
-
-    def ringBuzzer(self):
-        self.socket_connector.sendCommand("K")
-
-    def stopBuzzer(self):
-        self.socket_connector.sendCommand("L")
-
-    # Handle keyboard mode command
-
-    def upPressed(self, event):
-        self.goForward()
-
-    def downPressed(self, event):
-        self.goBackward()
-
-    def leftPressed(self, event):
-        self.goLeft()
-
-    def rightPressed(self, event):
-        self.goRight
-
-    def shiftPressed(self, event):
-        self.stop()
-
-    def oPressed(self, event):
-        self.downSpeed()
-
-    def pPressed(self, event):
-        self.upSpeed()
+        # MOTOR2 (LEFT) POWER
+        s = bytes([0x13, 0])
+        self.socket_connector.sendCommand(s)

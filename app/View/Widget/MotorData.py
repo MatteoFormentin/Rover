@@ -33,7 +33,7 @@ class MotorData(Canvas):
 
     def update(self, motor_data, battery):
 
-        if motor_data["state"] == 0:
+        '''if motor_data["state"] == 0:
             self.itemconfig(self.state_value,
                             text="STOP", fill="red")
 
@@ -51,7 +51,7 @@ class MotorData(Canvas):
 
         if motor_data["state"] == 4:
             self.itemconfig(self.state_value,
-                            text="RIGHT", fill="green")
+                            text="RIGHT", fill="green")'''
 
         self.itemconfig(self.left_throttle_value,
                         text=(str(motor_data["left_power"]) + "%"))
