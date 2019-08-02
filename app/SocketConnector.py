@@ -29,7 +29,8 @@ class SocketConnector():
                 print("provo a connettermi")
                 self.rover_socket = socket.socket(
                     socket.AF_INET, socket.SOCK_STREAM)
-                self.rover_socket.settimeout(5)
+               # self.rover_socket.settimeout(1)
+                #self.rover_socket.setblocking(1)
                 self.rover_socket.connect((HOST, PORT))
                 connected = True
                 self.connection_state = True
@@ -47,7 +48,6 @@ class SocketConnector():
         self.rover_socket.close()
 
     def getData(self, to_send):
-
         try:
             self.rover_socket.sendall(to_send)
             received = self.rover_socket.recv(1024).decode('ASCII')
@@ -56,12 +56,15 @@ class SocketConnector():
         except socket.timeout:
             print("Connessione chiusa")
             self.connection_state = False
+            self.close()
             self.connectToRover()
             return ""
 
-        except:
+        except Exception as e:
+            print(e)
             print("Generic Error - get data")
             self.connection_state = False
+            self.close()
             self.connectToRover()
             return ""
 
@@ -79,5 +82,9 @@ class SocketConnector():
             self.connection_state = False
             self.connectToRover()
 
-        except:
+        except Exception as e:
             print("Generic Error - Send command")
+            self.connection_state = False
+            self.close()
+            self.connectToRover()
+            print(e)

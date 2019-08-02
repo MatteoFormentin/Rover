@@ -20,17 +20,18 @@ class MainView(Frame):
         self.motor_data = MotorData(self)
         self.motor_data.grid(row=0, column=0)
 
-        self.compass = Compass(self)
-        self.compass.grid(row=0, column=3)
-
         self.buttons = Buttons(self, self.controller)
         self.buttons.grid(row=0, column=1)
 
         self.gps_plot = GPSPlot(self)
-        self.gps_plot.canvas.get_tk_widget().grid(row=1, column=1, columnspan=2)
+        self.gps_plot.canvas.get_tk_widget().grid(
+            row=1, column=1)
 
         self.gps_data = GPSData(self, self.gps_plot)
         self.gps_data.grid(row=1, column=0)
+
+        self.compass = Compass(self)
+        self.compass.grid(row=1, column=2)
 
     def updateRadar(self, distance_vector):
         self.radar.update(distance_vector)
@@ -44,5 +45,5 @@ class MainView(Frame):
     def updateCompass(self, heading):
         self.compass.updateHeading(heading)
 
-    def updateMode(self, mode):
-        self.buttons.updateMode(mode)
+    def getButtons(self):
+       return self.buttons

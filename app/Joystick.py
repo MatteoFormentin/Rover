@@ -1,7 +1,5 @@
 import pygame
 
-TURNING_SPEED = 105
-
 
 class Joystick():
     def __init__(self, controller):
@@ -30,7 +28,7 @@ class Joystick():
 
                     # BACKWARD
                     if event.value >= 1:
-                        self.controller.goBackward(self.speed)
+                        self.controller.goBackward()
 
                     # STOP
                     if -1 <= event.value < 0:
@@ -38,7 +36,7 @@ class Joystick():
 
                     # FORWARD
                     if event.value <= -1:
-                        self.controller.goForward(self.speed)
+                        self.controller.goForward()
 
                 if event.axis == 3:
                     # STOP
@@ -47,7 +45,7 @@ class Joystick():
 
                     # RIGHT
                     if event.value >= 1:
-                        self.controller.goRight(TURNING_SPEED)
+                        self.controller.goRight()
 
                     # STOP
                     if -1 <= event.value < 0:
@@ -55,20 +53,22 @@ class Joystick():
 
                     # LEFT
                     if event.value <= -1:
-                        self.controller.goLeft(TURNING_SPEED)
+                        self.controller.goLeft()
 
             if event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 5:
-                    self.setSpeed(self.speed + 50)
+                    self.controller.setSpeed(self.checkSpeed(
+                        self.controller.getSpeed() + 50))
                 if event.button == 4:
-                    self.setSpeed(self.speed - 50)
+                    self.controller.setSpeed(self.checkSpeed(
+                        self.controller.getSpeed() - 50))
 
         self.controller.app.after(1, self.processEvent)
 
-    def setSpeed(self, new_speed):
-        if new_speed > 255:
-            self.speed = 255
-        elif new_speed < 50:
-            self.speed = 105
-        else:
-            self.speed = new_speed
+    def checkSpeed(self, speed):
+        if speed > 255:
+            speed = 255
+        if speed < 55:
+            speed = 55
+        print(speed)
+        return speed

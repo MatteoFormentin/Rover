@@ -5,9 +5,14 @@ from app.SocketConnector import *
 from app.Joystick import *
 import json
 
-REFRESH_RATE = 50
+REFRESH_RATE = 100
 ENABLE_JOYSTCK = True
 ENABLE_NETWORK = True
+
+SPEED = 200
+TURNING_SPEED = 150
+AUTO_SPEED = 0
+AUTO_TURNING_SPEED = 0
 
 
 class Controller:
@@ -19,6 +24,11 @@ class Controller:
         self.app.geometry("1240x620")  # 900x700
         self.app.configure(background="#282828")
 
+        self.speed = SPEED
+        self.turning_speed = TURNING_SPEED
+        self.auto_speed = AUTO_SPEED
+        self.auto_turning_speed = AUTO_TURNING_SPEED
+
         self.mainView = MainView(self.app, self)
         self.socket_connector = SocketConnector(self)
         if ENABLE_NETWORK:
@@ -28,6 +38,12 @@ class Controller:
         if ENABLE_JOYSTCK:
             self.joystick = Joystick(self)
             self.joystick.processEvent()
+
+        # set default scale value
+        self.mainView.getButtons().updateSpeed(SPEED)
+        self.mainView.getButtons().updateTurningSpeed(TURNING_SPEED)
+        self.mainView.getButtons().updateAutoSpeed(AUTO_SPEED)
+        self.mainView.getButtons().updateAutoTurningSpeed(AUTO_TURNING_SPEED)
 
         self.mainView.pack()
 
@@ -45,7 +61,7 @@ class Controller:
             self.mainView.updateMotorData(data["motor"], data["battery"])
             self.mainView.updateGPSData(data["gps"])
             self.mainView.updateCompass(data["compass"])
-            self.mainView.updateMode(data["mode"])
+            self.mainView.getButtons().updateMode(data["mode"])
 
         self.app.after(REFRESH_RATE, self.updateData)
 
@@ -61,7 +77,36 @@ class Controller:
             "Collegare un Controller!"
         )
 
+    def setSpeed(self, speed):
+        self.speed = speed
+        self.mainView.getButtons().updateSpeed(self.speed)
+
+    def setTurningSpeed(self, speed):
+        self.turning_speed = speed
+        self.mainView.getButtons().updateTurningSpeed(self.turning_speed)
+
+    def setAutoSpeed(self, speed):
+        self.auto_speed = speed
+        self.mainView.getButtons().updateAutoSpeed(self.auto_speed)
+
+    def setAutoTurningSpeed(self, speed):
+        self.auto_turning_speed = speed
+        self.mainView.getButtons().updateAutoTurningSpeed(self.auto_turning_speed)
+
+    def getSpeed(self):
+        return self.speed
+
+    def getTurningSpeed(self):
+        return self.turning_speed
+
+    def getAutoSpeed(self):
+        return self.auto_speed
+
+    def getAutoTurningSpeed(self):
+        return self.auto_turning_speed
+
     # COMMAND SEND
+
     def setRemoteMode(self):
         s = bytes([0x02, 0x00])
         self.socket_connector.sendCommand(s)
@@ -70,7 +115,7 @@ class Controller:
         s = bytes([0x02, 0x01])
         self.socket_connector.sendCommand(s)
 
-    def goForward(self, speed):
+    def goForward(self):
         # MOTOR1 (RIGHT) DIRECTION
         s = bytes([0x10, 0x00])
         self.socket_connector.sendCommand(s)
@@ -80,14 +125,14 @@ class Controller:
         self.socket_connector.sendCommand(s)
 
         # MOTOR1 (RIGHT) POWER
-        s = bytes([0x12, speed])
+        s = bytes([0x12, self.speed])
         self.socket_connector.sendCommand(s)
 
         # MOTOR2 (LEFT) POWER
-        s = bytes([0x13, speed])
+        s = bytes([0x13, self.speed])
         self.socket_connector.sendCommand(s)
 
-    def goBackward(self, speed):
+    def goBackward(self):
         # MOTOR1 (RIGHT) DIRECTION
         s = bytes([0x10, 0x01])
         self.socket_connector.sendCommand(s)
@@ -97,14 +142,14 @@ class Controller:
         self.socket_connector.sendCommand(s)
 
         # MOTOR1 (RIGHT) POWER
-        s = bytes([0x12, speed])
+        s = bytes([0x12, self.speed])
         self.socket_connector.sendCommand(s)
 
         # MOTOR2 (LEFT) POWER
-        s = bytes([0x13, speed])
+        s = bytes([0x13, self.speed])
         self.socket_connector.sendCommand(s)
 
-    def goLeft(self, speed):
+    def goLeft(self):
         # MOTOR1 (RIGHT) DIRECTION
         s = bytes([0x10, 0x00])
         self.socket_connector.sendCommand(s)
@@ -114,14 +159,14 @@ class Controller:
         self.socket_connector.sendCommand(s)
 
         # MOTOR1 (RIGHT) POWER
-        s = bytes([0x12, speed])
+        s = bytes([0x12, self.turning_speed])
         self.socket_connector.sendCommand(s)
 
         # MOTOR2 (LEFT) POWER
-        s = bytes([0x13, speed])
+        s = bytes([0x13, self.turning_speed])
         self.socket_connector.sendCommand(s)
 
-    def goRight(self, speed):
+    def goRight(self):
         # MOTOR1 (RIGHT) DIRECTION
         s = bytes([0x10, 0x01])
         self.socket_connector.sendCommand(s)
@@ -131,16 +176,16 @@ class Controller:
         self.socket_connector.sendCommand(s)
 
         # MOTOR1 (RIGHT) POWER
-        s = bytes([0x12, speed])
+        s = bytes([0x12, self.turning_speed])
         self.socket_connector.sendCommand(s)
 
         # MOTOR2 (LEFT) POWER
-        s = bytes([0x13, speed])
+        s = bytes([0x13, self.turning_speed])
         self.socket_connector.sendCommand(s)
 
     def stop(self):
         # MOTOR1 (RIGHT) POWER
-        s = bytes([0x00, 0])
+        s = bytes([0x12, 0])
         self.socket_connector.sendCommand(s)
 
         # MOTOR2 (LEFT) POWER
