@@ -51,7 +51,7 @@ class GPSPlot():
         self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
 
     def updatePlot(self, lat, lon):
-        if lat != None and lon != None:
+        if lat != None and lon != None and (self.gps_coord["lat"][-1] != lat and self.gps_coord["lon"][-1] != lon):
             self.gps_coord["lat"].append(lat)
             self.gps_coord["lon"].append(lon)
 
@@ -65,5 +65,8 @@ class GPSPlot():
 
             self.current_pos.set_data(
                 self.gps_coord["lon"][-1], self.gps_coord["lat"][-1])
+
+            print(self.gps_coord["lat"])
+            print(self.gps_coord["lon"])
 
             self.canvas.draw()

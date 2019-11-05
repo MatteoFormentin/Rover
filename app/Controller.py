@@ -55,7 +55,7 @@ class Controller:
         s = bytes([0x01, 0x00])
         received = self.socket_connector.getData(s)
         if not len(received) == 0:
-            print(received)
+            #print(received)
             data = json.loads(received)
             self.mainView.updateRadar(data["radar"])
             self.mainView.updateMotorData(data["motor"], data["battery"])
