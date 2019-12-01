@@ -15,7 +15,7 @@ class Compass(Canvas):
                          highlightthickness=0)
 
         self.filename = os.path.join(os.path.abspath(
-            os.curdir), 'app/images/compass_background.jpg')
+            os.curdir), 'ground_station/app/images/compass_background.jpg')
 
         self.img = Image.open(self.filename)
         self.image = ImageTk.PhotoImage(self.img)

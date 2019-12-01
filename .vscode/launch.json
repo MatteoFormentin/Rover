@@ -8,7 +8,7 @@
             "name": "Run App",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/main.py",
+            "program": "${workspaceFolder}/ground_station/main.py",
             "console": "integratedTerminal"
         },
         {
