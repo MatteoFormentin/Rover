@@ -1,16 +1,18 @@
 from tkinter import *
 from tkinter import messagebox
 from app.View.MainView import *
-from app.SocketConnector import *
+from app.Network import *
+from app.Camera import *
 from app.Joystick import *
 import json
 
 REFRESH_RATE = 100
 ENABLE_JOYSTCK = True
 ENABLE_NETWORK = True
+ENABLE_CAMERA = True
 
-SPEED = 200
-TURNING_SPEED = 150
+SPEED = 100
+TURNING_SPEED = 80
 AUTO_SPEED = 0
 AUTO_TURNING_SPEED = 0
 
@@ -30,14 +32,18 @@ class Controller:
         self.auto_turning_speed = AUTO_TURNING_SPEED
 
         self.mainView = MainView(self.app, self)
-        self.socket_connector = SocketConnector(self)
+        self.network = Network(self)
         if ENABLE_NETWORK:
-            self.socket_connector.connectToRover()
-            self.updateData()
+            self.network.connect()
+           # self.updateData()
 
         if ENABLE_JOYSTCK:
             self.joystick = Joystick(self)
             self.joystick.processEvent()
+
+        if ENABLE_CAMERA:
+            self.camera = Camera()
+            self.camera.start()
 
         # set default scale value
         self.mainView.getButtons().updateSpeed(SPEED)
@@ -55,7 +61,7 @@ class Controller:
         s = bytes([0x01, 0x00])
         received = self.socket_connector.getData(s)
         if not len(received) == 0:
-            #print(received)
+            # print(received)
             data = json.loads(received)
             self.mainView.updateRadar(data["radar"])
             self.mainView.updateMotorData(data["motor"], data["battery"])
@@ -106,8 +112,126 @@ class Controller:
         return self.auto_turning_speed
 
     # COMMAND SEND
-
     def setRemoteMode(self):
+        pass
+
+    def setAutoMode(self):
+        pass
+
+    def goForward(self):
+        data = {
+                'commands':[
+                    {
+                        'command': 'RM_dir',
+                        'value': 0
+                    },
+                    {
+                        'command': 'LM_dir',
+                        'value': 0
+                    },
+                    {
+                        'command': 'RM_speed',
+                        'value': self.speed
+                    },
+                    {
+                        'command': 'LM_speed',
+                        'value': self.speed
+                    }
+                ]
+        }
+
+        self.network.sendData(json.dumps(data))
+
+    def goBackward(self):
+        data = {
+            'commands': [
+                {
+                    'command': 'RM_dir',
+                    'value': 1
+                },
+                {
+                    'command': 'LM_dir',
+                    'value': 1
+                },
+                {
+                    'command': 'RM_speed',
+                    'value': self.speed
+                },
+                {
+                    'command': 'LM_speed',
+                    'value': self.speed
+                }
+            ]
+        }
+
+        self.network.sendData(json.dumps(data))
+
+
+    def goLeft(self):
+        data = {
+            'commands': [
+                {
+                    'command': 'RM_dir',
+                    'value': 1
+                },
+                {
+                    'command': 'LM_dir',
+                    'value': 0
+                },
+                {
+                    'command': 'RM_speed',
+                    'value': self.speed
+                },
+                {
+                    'command': 'LM_speed',
+                    'value': self.speed
+                }
+            ]
+        }
+
+        self.network.sendData(json.dumps(data))
+
+    def goRight(self):
+        data = {
+            'commands': [
+                {
+                    'command': 'RM_dir',
+                    'value': 0
+                },
+                {
+                    'command': 'LM_dir',
+                    'value': 1
+                },
+                {
+                    'command': 'RM_speed',
+                    'value': self.speed
+                },
+                {
+                    'command': 'LM_speed',
+                    'value': self.speed
+                }
+            ]
+        }
+
+        self.network.sendData(json.dumps(data))
+
+    def stop(self):
+        data = {
+            'commands': [
+                {
+                    'command': 'RM_speed',
+                    'value': 0
+                },
+                {
+                    'command': 'LM_speed',
+                    'value': 0
+                }
+            ]
+        }
+
+        self.network.sendData(json.dumps(data))
+
+    '''def setRemoteMode(self):
         s = bytes([0x02, 0x00])
         self.socket_connector.sendCommand(s)
 
@@ -191,3 +315,4 @@ class Controller:
         # MOTOR2 (LEFT) POWER
         s = bytes([0x13, 0])
         self.socket_connector.sendCommand(s)
+'''

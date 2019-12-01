@@ -45,12 +45,14 @@ class Motor:
         self.right_speed=0
         self.left_speed=0
 
-    def handleShutdown():
+    def handleShutdown(self):
         self.pwm_right.stop()
         self.pwm_left.stop()
 
         self.right_speed = 0
         self.left_speed = 0
+
+        GPIO.cleanup()
 
 
     def setRightMotorDirection(self, dir):

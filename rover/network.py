@@ -1,14 +1,17 @@
 
 import zmq
 
-
-
+PORT = "5554"
 
 
 class Network:
     def __init__(self):
-        context = zmq.Context()
-        footage_socket = context.socket(zmq.PUB)
-        footage_socket.bind('tcp://*:5555')
+        self.context = zmq.Context()
+        self.socket = self.context.socket(zmq.PAIR)
+        self.socket.bind("tcp://*:%s" % PORT)
 
-        footage_socket.send(jpg_as_text)
+    def getData(self):
+        return self.socket.recv_string()
+
+    def sendData(self, data):
+        self.socket.send_string(data)
