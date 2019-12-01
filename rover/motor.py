@@ -82,7 +82,7 @@ class Motor:
             self.pwm_right.ChangeDutyCycle(0)
 
     def setLeftMotorSpeed(self, speed):
-        self.right_speed=speed
+        self.left_speed=speed
         if speed - self.COMP_SPEED_L > 0:
             self.pwm_left.ChangeDutyCycle(speed - self.COMP_SPEED_L)
 
@@ -93,7 +93,6 @@ class Motor:
         return self.right_speed
 
     def getLeftMotorSpeed(self):
-
         return self.left_speed
 
     def motorStop(self):

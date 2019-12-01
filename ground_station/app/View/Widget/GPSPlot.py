@@ -5,21 +5,17 @@ from tkinter import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
 
-CANVAS_WIDTH = 300
-CANVAS_HEIGHT = 300
-
 
 class GPSPlot():
     def __init__(self, root):
          # Widget will be update by gps data
-        
 
         self.gps_coord = {
             "lat": [],
             "lon": []
         }
 
-        self.fig = Figure(figsize=(2*3.125, 3.125),
+        self.fig = Figure(figsize=(2*2.5, 3),
                           dpi=100, facecolor="#282828")
 
         self.ax1 = self.fig.add_subplot(1, 1, 1)

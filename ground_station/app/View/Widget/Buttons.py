@@ -1,7 +1,7 @@
 from tkinter import *
 import os
 
-CANVAS_WIDTH = 600
+CANVAS_WIDTH = 400
 CANVAS_HEIGHT = 300
 
 BUTTON_WIDTH = 15
@@ -27,20 +27,20 @@ class Buttons(Frame):
         self.auto_button.grid(row=2, column=0, padx=(50, 50))
 
         self.speed = Scale(
-            self, from_=0, to=255, orient=HORIZONTAL,  background="#282828", fg="white", length=SLIDER_LENGHT, label="Speed",
+            self, from_=0, to=100, orient=HORIZONTAL,  background="#282828", fg="white", length=SLIDER_LENGHT, label="Speed",
             command=self.changedScaleSpeed)
         self.speed.grid(row=0, column=1, pady=(20, 0))
 
         self.turning_speed = Scale(
-            self, from_=0, to=255, orient=HORIZONTAL,  background="#282828", fg="white", length=SLIDER_LENGHT, label="Turning Speed", command=self.changedScaleTurningSpeed)
+            self, from_=0, to=100, orient=HORIZONTAL,  background="#282828", fg="white", length=SLIDER_LENGHT, label="Turning Speed", command=self.changedScaleTurningSpeed)
         self.turning_speed.grid(row=1, column=1, pady=(5, 0))
 
         self.auto_speed = Scale(
-            self, from_=0, to=255, orient=HORIZONTAL,  background="#282828", fg="white", length=SLIDER_LENGHT, label="Auto Speed", command=self.changedScaleAutoSpeed)
+            self, from_=0, to=100, orient=HORIZONTAL,  background="#282828", fg="white", length=SLIDER_LENGHT, label="Auto Speed", command=self.changedScaleAutoSpeed)
         self.auto_speed.grid(row=2, column=1, pady=(5, 0))
 
         self.auto_turning_speed = Scale(
-            self, from_=0, to=255, orient=HORIZONTAL,  background="#282828", fg="white", length=SLIDER_LENGHT, label="Auto Turning Speed", command=self.changedScaleAutoTurningSpeed)
+            self, from_=0, to=100, orient=HORIZONTAL,  background="#282828", fg="white", length=SLIDER_LENGHT, label="Auto Turning Speed", command=self.changedScaleAutoTurningSpeed)
         self.auto_turning_speed.grid(row=3, column=1, pady=(5, 0))
 
     def autoButtonPressed(self):

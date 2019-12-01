@@ -3,7 +3,7 @@ from PIL import ImageTk, Image
 import os
 import math
 
-CANVAS_WIDTH = 400
+CANVAS_WIDTH = 390
 CANVAS_HEIGHT = 300
 
 

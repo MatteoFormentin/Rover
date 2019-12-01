@@ -20,4 +20,4 @@ class Network():
         self.socket.send_string(data)
 
     def getData(self):
-        self.socket.recv_string()
+        return self.socket.recv_string()

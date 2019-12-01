@@ -9,9 +9,11 @@ class Camera(Thread):
     def __init__(self):
         Thread.__init__(self)
         self.context = zmq.Context()
-        self.footage_socket = self.context.socket(zmq.DISH)
-        self.footage_socket.connect('udp://192.168.0.1:5555')
+        self.footage_socket = self.context.socket(zmq.SUB)
+        self.footage_socket.set_hwm(10)
+        self.footage_socket.connect('tcp://192.168.0.1:5555')
         self.footage_socket.setsockopt_string(zmq.SUBSCRIBE, np.unicode(''))
+
         self.run_thread = True
         self.curr_frame = None
 

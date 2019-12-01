@@ -17,6 +17,8 @@ class Controller:
 
         self.camera = Camera()
         self.camera.start()
+        
+        print("READY!")
 
     def run(self):
         while True:
@@ -25,17 +27,19 @@ class Controller:
                     data = json.loads(self.queue.get())
 
                     for c in data['commands']:
+                        if c['command'] == 'update':
+                            self.network.sendData(self.collectAllData())
+                            
                         if c['command'] == 'RM_dir':
                             self.motor.setRightMotorDirection(c['value'])
-                            print('RM_dir')
+
                         if c['command'] == 'LM_dir':
-                            print('LM_dir')
                             self.motor.setLeftMotorDirection(c['value'])
+
                         if c['command'] == 'RM_speed':
                             self.motor.setRightMotorSpeed(c['value'])
-                            print('RM_speed')
+
                         if c['command'] == 'LM_speed':
-                            print('LM_speed')
                             self.motor.setLeftMotorSpeed(c['value'])
 
                 # HERE ALL SENSORS LOOPS
@@ -43,3 +47,32 @@ class Controller:
             except KeyboardInterrupt:
                 self.motor.handleShutdown()
                 self.camera.stop()
+    
+    def collectAllData(self):
+        return json.dumps({
+            "motor": {
+                "state": "STOP",
+                "left_power": self.motor.getLeftMotorSpeed(),
+                "right_power": self.motor.getRightMotorSpeed()
+            }
+        })
+
+
+'''JSON MESSAGE TO GROUND STATION
+{
+    "radar": [0, 1, 2, 3, 4, 5],
+    "gps": {
+        "latitude": 1.00,
+            "longitude": 1.00,
+            "speed": 10.0,
+            "altitude": 220
+    },
+    "imu": [pitch, roll],
+    "compass": gradi_int,
+    "motor": {
+        "state": "STOP",
+        "left_power": 100,
+        "right_power": 100
+    }
+}
+'''

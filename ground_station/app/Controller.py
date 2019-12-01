@@ -23,7 +23,7 @@ class Controller:
         self.app.resizable(width=False, height=False)
         self.app.wm_title("Rover Ground Station")
         self.app.wm_iconname("Rover Ground Station")
-        self.app.geometry("1540x620")  # 900x700
+        self.app.geometry("1420x620")  # 900x700
         self.app.configure(background="#282828")
 
         self.speed = SPEED
@@ -31,15 +31,12 @@ class Controller:
         self.auto_speed = AUTO_SPEED
         self.auto_turning_speed = AUTO_TURNING_SPEED
 
-        
-
-
         self.mainView = MainView(self.app, self)
-        
+
         if ENABLE_NETWORK:
             self.network = Network(self)
             self.network.connect()
-           # self.updateData()
+            self.updateData()
 
         if ENABLE_JOYSTCK:
             self.joystick = Joystick(self)
@@ -50,7 +47,6 @@ class Controller:
             self.camera.start()
             self.updateCamera()
 
-        
         # set default scale value
         self.mainView.getButtons().updateSpeed(SPEED)
         self.mainView.getButtons().updateTurningSpeed(TURNING_SPEED)
@@ -64,16 +60,25 @@ class Controller:
         # except UnicodeDecodeError:
 
     def updateData(self):
-        s = bytes([0x01, 0x00])
-        received = self.socket_connector.getData(s)
+        data = {
+            'commands': [
+                {
+                    'command': 'update'
+                }
+            ]
+        }
+
+        self.network.sendData(json.dumps(data))
+        received = self.network.getData()
+
         if not len(received) == 0:
             # print(received)
             data = json.loads(received)
-            self.mainView.updateRadar(data["radar"])
-            self.mainView.updateMotorData(data["motor"], data["battery"])
-            self.mainView.updateGPSData(data["gps"])
-            self.mainView.updateCompass(data["compass"])
-            self.mainView.getButtons().updateMode(data["mode"])
+            # self.mainView.updateRadar(data["radar"])
+            self.mainView.updateMotorData(data["motor"], 100)
+            # self.mainView.updateGPSData(data["gps"])
+            # self.mainView.updateCompass(data["compass"])
+            # self.mainView.getButtons().updateMode(data["mode"])
 
         self.app.after(REFRESH_RATE, self.updateData)
 
@@ -130,24 +135,24 @@ class Controller:
 
     def goForward(self):
         data = {
-                'commands':[
-                    {
-                        'command': 'RM_dir',
-                        'value': 0
-                    },
-                    {
-                        'command': 'LM_dir',
-                        'value': 0
-                    },
-                    {
-                        'command': 'RM_speed',
-                        'value': self.speed
-                    },
-                    {
-                        'command': 'LM_speed',
-                        'value': self.speed
-                    }
-                ]
+            'commands': [
+                {
+                    'command': 'RM_dir',
+                    'value': 0
+                },
+                {
+                    'command': 'LM_dir',
+                    'value': 0
+                },
+                {
+                    'command': 'RM_speed',
+                    'value': self.speed
+                },
+                {
+                    'command': 'LM_speed',
+                    'value': self.speed
+                }
+            ]
         }
 
         self.network.sendData(json.dumps(data))
@@ -176,7 +181,6 @@ class Controller:
 
         self.network.sendData(json.dumps(data))
 
-
     def goLeft(self):
         data = {
             'commands': [
@@ -190,11 +194,11 @@ class Controller:
                 },
                 {
                     'command': 'RM_speed',
-                    'value': self.speed
+                    'value': self.turning_speed
                 },
                 {
                     'command': 'LM_speed',
-                    'value': self.speed
+                    'value': self.turning_speed
                 }
             ]
         }
@@ -214,11 +218,11 @@ class Controller:
                 },
                 {
                     'command': 'RM_speed',
-                    'value': self.speed
+                    'value': self.turning_speed
                 },
                 {
                     'command': 'LM_speed',
-                    'value': self.speed
+                    'value': self.turning_speed
                 }
             ]
         }

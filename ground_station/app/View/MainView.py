@@ -32,7 +32,7 @@ class MainView(Frame):
         self.gps_data.grid(row=1, column=0)
 
         self.camera_window = CameraWindow(self)
-        self.camera_window.grid(row=1, column=2)
+        self.camera_window.grid(row=1, column=2, columnspan=2)
 
         self.compass = Compass(self)
         self.compass.grid(row=0, column=3)
