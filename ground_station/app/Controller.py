@@ -23,7 +23,7 @@ class Controller:
         self.app.resizable(width=False, height=False)
         self.app.wm_title("Rover Ground Station")
         self.app.wm_iconname("Rover Ground Station")
-        self.app.geometry("1240x620")  # 900x700
+        self.app.geometry("1540x620")  # 900x700
         self.app.configure(background="#282828")
 
         self.speed = SPEED
@@ -31,9 +31,13 @@ class Controller:
         self.auto_speed = AUTO_SPEED
         self.auto_turning_speed = AUTO_TURNING_SPEED
 
+        
+
+
         self.mainView = MainView(self.app, self)
-        self.network = Network(self)
+        
         if ENABLE_NETWORK:
+            self.network = Network(self)
             self.network.connect()
            # self.updateData()
 
@@ -44,7 +48,9 @@ class Controller:
         if ENABLE_CAMERA:
             self.camera = Camera()
             self.camera.start()
+            self.updateCamera()
 
+        
         # set default scale value
         self.mainView.getButtons().updateSpeed(SPEED)
         self.mainView.getButtons().updateTurningSpeed(TURNING_SPEED)
@@ -82,6 +88,10 @@ class Controller:
             "Controller non Connesso",
             "Collegare un Controller!"
         )
+
+    def updateCamera(self):
+        self.mainView.updateCameraWindow(self.camera.getFrame())
+        self.app.after(1, self.updateCamera)
 
     def setSpeed(self, speed):
         self.speed = speed

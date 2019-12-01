@@ -5,6 +5,7 @@ from app.View.Widget.GPSData import *
 from app.View.Widget.GPSPlot import *
 from app.View.Widget.Compass import *
 from app.View.Widget.Buttons import *
+from app.View.Widget.CameraWindow import *
 
 
 class MainView(Frame):
@@ -30,8 +31,11 @@ class MainView(Frame):
         self.gps_data = GPSData(self, self.gps_plot)
         self.gps_data.grid(row=1, column=0)
 
+        self.camera_window = CameraWindow(self)
+        self.camera_window.grid(row=1, column=2)
+
         self.compass = Compass(self)
-        self.compass.grid(row=1, column=2)
+        self.compass.grid(row=0, column=3)
 
     def updateRadar(self, distance_vector):
         self.radar.update(distance_vector)
@@ -44,6 +48,12 @@ class MainView(Frame):
 
     def updateCompass(self, heading):
         self.compass.updateHeading(heading)
+    
+    def updateCameraWindow(self, img):
+        self.camera_window.updateCameraWindow(img)
 
     def getButtons(self):
        return self.buttons
+
+    def getCameraWindow(self):
+        return self.camera_window
