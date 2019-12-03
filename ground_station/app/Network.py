@@ -12,7 +12,9 @@ class Network():
 
     def connect(self):
         try:
+            print("connetto...")
             self.socket.connect("tcp://" + HOST + ":" + PORT)
+            print("connesso!")
         except Exception:
             self.controller.showCheckConnectionDialog()
 

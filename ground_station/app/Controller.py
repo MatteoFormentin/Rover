@@ -36,7 +36,9 @@ class Controller:
         if ENABLE_NETWORK:
             self.network = Network(self)
             self.network.connect()
+            print("primo update...")
             self.updateData()
+            print("fatto!")
 
         if ENABLE_JOYSTCK:
             self.joystick = Joystick(self)
@@ -70,11 +72,13 @@ class Controller:
 
         self.network.sendData(json.dumps(data))
         received = self.network.getData()
+        print(received)
 
         if not len(received) == 0:
-            # print(received)
+            print(received)
             data = json.loads(received)
-            # self.mainView.updateRadar(data["radar"])
+           # print(data["radar"])
+           #self.mainView.updateRadar(data["radar"])
             self.mainView.updateMotorData(data["motor"], 100)
             # self.mainView.updateGPSData(data["gps"])
             # self.mainView.updateCompass(data["compass"])
@@ -186,11 +190,11 @@ class Controller:
             'commands': [
                 {
                     'command': 'RM_dir',
-                    'value': 1
+                    'value': 0
                 },
                 {
                     'command': 'LM_dir',
-                    'value': 0
+                    'value': 1
                 },
                 {
                     'command': 'RM_speed',
@@ -210,11 +214,11 @@ class Controller:
             'commands': [
                 {
                     'command': 'RM_dir',
-                    'value': 0
+                    'value': 1
                 },
                 {
                     'command': 'LM_dir',
-                    'value': 1
+                    'value': 0
                 },
                 {
                     'command': 'RM_speed',

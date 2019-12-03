@@ -24,4 +24,3 @@ class Camera(Thread):
     def stop(self):
         self.run_thread = False
         self.camera.release()
-        cv2.destroyAllWindows()

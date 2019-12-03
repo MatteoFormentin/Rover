@@ -2,6 +2,8 @@ from motor import *
 from network import *
 from camera import *
 from queue import *
+from radar import *
+
 from threading import Thread
 
 import json
@@ -17,8 +19,12 @@ class Controller:
 
         self.camera = Camera()
         self.camera.start()
+
+        #self.radar = Radar()
         
         print("READY!")
+        '''while True:
+            self.radar.update()'''
 
     def run(self):
         while True:
@@ -43,10 +49,15 @@ class Controller:
                             self.motor.setLeftMotorSpeed(c['value'])
 
                 # HERE ALL SENSORS LOOPS
+                
 
             except KeyboardInterrupt:
                 self.motor.handleShutdown()
                 self.camera.stop()
+                self.network.stop()
+                #self.camera.join()
+                #self.network.join()
+                exit()
     
     def collectAllData(self):
         return json.dumps({
@@ -55,6 +66,9 @@ class Controller:
                 "left_power": self.motor.getLeftMotorSpeed(),
                 "right_power": self.motor.getRightMotorSpeed()
             }
+            
+
+            #"radar": self.radar.update()
         })
 
 
