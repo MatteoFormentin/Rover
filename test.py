@@ -1,16 +1,28 @@
 # Load configuration file
-import configparser
+from threading import Thread
+import numpy as np
+import base64
+import cv2
+import zmq
+
+import socket
+
+camera = cv2.VideoCapture(0)  # init the camera
 
 
-config = configparser.ConfigParser()
-config.read('rover/pin_configuration.ini')
+while True:
+    grabbed, frame = camera.read()  # grab the current frame
+    frame = cv2.resize(frame, (640, 480))  # resize the frame
+    encoded, buffer = cv2.imencode('.jpg', frame)
+    jpg_as_text = base64.b64encode(buffer)
 
-RIGHT_IN1 = int(config['MOTOR']['RIGHT_IN1'])
-RIGHT_IN2 = int(config['MOTOR']['RIGHT_IN2'])
-LEFT_IN3 = int(config['MOTOR']['LEFT_IN3'])
-LEFT_IN4 = int(config['MOTOR']['LEFT_IN4'])
-RIGHT_PWM_ENA = int(config['MOTOR']['RIGHT_PWM_ENA'])
-RIGHT_PWM_ENB = int(config['MOTOR']['RIGHT_PWM_ENB'])
-COMP_SPEED_R = int(config['MOTOR']['COMP_SPEED_R'])
-COMP_SPEED_L = int(config['MOTOR']['COMP_SPEED_L'])
-print(RIGHT_IN1)
+    self.chunks = jpg_as_text[0:]
+
+
+
+
+
+
+
+    print(len(jpg_as_text))
+

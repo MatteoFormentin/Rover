@@ -3,6 +3,7 @@ from network import *
 from camera import *
 from queue import *
 from radar import *
+from gps import *
 
 from threading import Thread
 
@@ -19,6 +20,9 @@ class Controller:
 
         self.camera = Camera()
         self.camera.start()
+
+        self.gps = Gps()
+        
 
         #self.radar = Radar()
         
@@ -49,6 +53,8 @@ class Controller:
                             self.motor.setLeftMotorSpeed(c['value'])
 
                 # HERE ALL SENSORS LOOPS
+                self.gps.update()
+
                 
 
             except KeyboardInterrupt:
