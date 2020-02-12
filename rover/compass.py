@@ -1,4 +1,4 @@
-
+# LIBRARY: https://github.com/RigacciOrg/py-qmc5883l
 import py_qmc5883l
 
 

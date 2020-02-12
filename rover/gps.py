@@ -23,4 +23,3 @@ def update(self):
 
 def getData(self):
     return self.gps
-   

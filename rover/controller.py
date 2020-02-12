@@ -15,26 +15,26 @@ class Controller:
     def __init__(self):
         self.motor = Motor()
 
-        self.queue = Queue()
+        # NETWORK THREAD
+        self.queue = Queue()  # Shared queue
         self.network = Network(self.queue)
         self.network.start()
 
+        # SENSORS SETUP
         self.gps = Gps()
         self.compass = Compass()
-
         #self.radar = Radar()
 
-
+        # CAMERA THREAD
         self.camera = Camera()
         self.camera.start()
 
-
         print("READY!")
-
 
     def run(self):
         while True:
             try:
+                # READ ONE COMMAND PACKET AND EXECUTE ALL THE COMMANDS FROM GROUND STATION
                 if not self.queue.empty():
                     data = json.loads(self.queue.get())
 
