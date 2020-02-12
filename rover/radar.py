@@ -30,7 +30,7 @@ class Radar:
         self.right = DistanceSensor(
             echo=HC_ECHO_RIGHT, trigger=HC_TRIGGER_RIGHT, max_distance = 2.0)
 
-    def update(self):
+    def getDistances(self):
         '''measure = [0, 0, 0]
         measure[0] = self.right.distance
         measure[1] = self.center.distance

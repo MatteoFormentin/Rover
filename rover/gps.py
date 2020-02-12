@@ -22,13 +22,5 @@ def update(self):
 
 
 def getData(self):
-    
-    self.gps.has_fix
-
-    self.gps.latitude
-    self.gps.longitude
-    self.gps.fix_quality
-
-    self.gps.satellites
-    self.gps.altitude_m
-    self.gps.speed_knots
+    return self.gps
+   

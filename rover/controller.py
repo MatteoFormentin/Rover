@@ -4,6 +4,7 @@ from camera import *
 from queue import *
 from radar import *
 from gps import *
+from Compass import *
 
 from threading import Thread
 
@@ -18,17 +19,18 @@ class Controller:
         self.network = Network(self.queue)
         self.network.start()
 
+        self.gps = Gps()
+        self.compass = Compass()
+
+        #self.radar = Radar()
+
+
         self.camera = Camera()
         self.camera.start()
 
-        self.gps = Gps()
-        
 
-        #self.radar = Radar()
-        
         print("READY!")
-        '''while True:
-            self.radar.update()'''
+
 
     def run(self):
         while True:
@@ -37,9 +39,15 @@ class Controller:
                     data = json.loads(self.queue.get())
 
                     for c in data['commands']:
+                        # SEND NEW DATA
                         if c['command'] == 'update':
                             self.network.sendData(self.collectAllData())
-                            
+
+                        # CAMERA STREAM COMMANDS
+                        if c['command'] == 'C_Stream_S':
+                            self.motor.setRightMotorDirection(c['value'])
+
+                        # MOTORS COMMANDS
                         if c['command'] == 'RM_dir':
                             self.motor.setRightMotorDirection(c['value'])
 
@@ -55,26 +63,35 @@ class Controller:
                 # HERE ALL SENSORS LOOPS
                 self.gps.update()
 
-                
-
             except KeyboardInterrupt:
                 self.motor.handleShutdown()
                 self.camera.stop()
                 self.network.stop()
-                #self.camera.join()
-                #self.network.join()
+                # self.camera.join()
+                # self.network.join()
                 exit()
-    
+
     def collectAllData(self):
+        gps_data = self.gps.getData()
         return json.dumps({
             "motor": {
                 "state": "STOP",
                 "left_power": self.motor.getLeftMotorSpeed(),
                 "right_power": self.motor.getRightMotorSpeed()
-            }
-            
+            },
+            "gps": {
+                "fix": gps_data.has_fix,
+                "fix_quality": gps_data.fix_quality,
+                "satellites": gps_data.satellites,
+                "latitude": gps_data.latitude,
+                "longitude": gps_data.longitude,
+                "speed": gps_data.speed_knots,
+                "altitude": gps_data.altitude_m
+            },
+            "compass": self.compass.getBearing()
 
-            #"radar": self.radar.update()
+
+            # "radar": self.radar.getDistances()
         })
 
 

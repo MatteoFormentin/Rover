@@ -27,7 +27,7 @@ class Motor:
         self.COMP_SPEED_L = 0
 
 
-        GPIO.setmode(GPIO.BOARD)
+        #GPIO.setmode(GPIO.BOARD)
         GPIO.setwarnings(False)
         GPIO.setup(self.RIGHT_IN1, GPIO.OUT)
         GPIO.setup(self.RIGHT_IN2, GPIO.OUT)
