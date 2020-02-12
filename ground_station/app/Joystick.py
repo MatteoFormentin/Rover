@@ -9,10 +9,9 @@ class Joystick():
 
         self.speed = 50
 
-        while pygame.joystick.get_count() < 1:
+        if pygame.joystick.get_count() < 1:
             self.controller.showCheckControllerDialog()
-            pygame.joystick.quit()
-            pygame.joystick.init()
+            
 
         pygame.joystick.Joystick(0).init()
 
@@ -72,3 +71,6 @@ class Joystick():
             speed = 50
         print(speed)
         return speed
+
+    def stop(self):
+        pygame.joystick.quit()

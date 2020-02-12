@@ -5,11 +5,12 @@ from app.Network import *
 from app.Camera import *
 from app.Joystick import *
 import json
+import sys
 
 REFRESH_RATE = 100
 ENABLE_JOYSTCK = True
 ENABLE_NETWORK = True
-ENABLE_CAMERA = True
+ENABLE_CAMERA = False
 
 SPEED = 100
 TURNING_SPEED = 80
@@ -25,6 +26,7 @@ class Controller:
         self.app.wm_iconname("Rover Ground Station")
         self.app.geometry("1420x620")  # 900x700
         self.app.configure(background="#282828")
+        self.app.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         self.speed = SPEED
         self.turning_speed = TURNING_SPEED
@@ -36,9 +38,9 @@ class Controller:
         if ENABLE_NETWORK:
             self.network = Network(self)
             self.network.connect()
-            print("primo update...")
+            print("First update...")
             self.updateData()
-            print("fatto!")
+            print("Done!")
 
         if ENABLE_JOYSTCK:
             self.joystick = Joystick(self)
@@ -61,6 +63,20 @@ class Controller:
         self.app.mainloop()
         # except UnicodeDecodeError:
 
+    def on_closing(self):
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+           self.quitApp()
+
+    def quitApp(self):
+        if ENABLE_NETWORK:
+            self.network.disconnect()
+        if ENABLE_CAMERA:
+            self.camera.stop()
+        if ENABLE_JOYSTCK:
+            self.controller.stop()
+        self.app.destroy()
+        sys.exit()
+
     def updateData(self):
         data = {
             'commands': [
@@ -78,7 +94,7 @@ class Controller:
             print(received)
             data = json.loads(received)
            # print(data["radar"])
-           #self.mainView.updateRadar(data["radar"])
+           # self.mainView.updateRadar(data["radar"])
             self.mainView.updateMotorData(data["motor"], 100)
             # self.mainView.updateGPSData(data["gps"])
             # self.mainView.updateCompass(data["compass"])
@@ -88,15 +104,17 @@ class Controller:
 
     def showCheckConnectionDialog(self):
         messagebox.showerror(
-            "Errore Connessione",
-            "Assicurarsi di essere connessi alla rete WiFi del rover!"
+            "Connection Error",
+            "Please make sure to be connected to the rover Wi-Fi and restart Ground Station"
         )
+        self.quitApp()
 
     def showCheckControllerDialog(self):
         messagebox.showerror(
-            "Controller non Connesso",
-            "Collegare un Controller!"
+            "Controller not Found",
+            "Connect the rover controller and restart Ground Station"
         )
+        self.quitApp()
 
     def updateCamera(self):
         self.mainView.updateCameraWindow(self.camera.getFrame())
@@ -248,89 +266,3 @@ class Controller:
         }
 
         self.network.sendData(json.dumps(data))
-
-    '''def setRemoteMode(self):
-        s = bytes([0x02, 0x00])
-        self.socket_connector.sendCommand(s)
-
-    def setAutoMode(self):
-        s = bytes([0x02, 0x01])
-        self.socket_connector.sendCommand(s)
-
-    def goForward(self):
-        # MOTOR1 (RIGHT) DIRECTION
-        s = bytes([0x10, 0x00])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR2 (LEFT) DIRECTION
-        s = bytes([0x11, 0x00])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR1 (RIGHT) POWER
-        s = bytes([0x12, self.speed])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR2 (LEFT) POWER
-        s = bytes([0x13, self.speed])
-        self.socket_connector.sendCommand(s)
-
-    def goBackward(self):
-        # MOTOR1 (RIGHT) DIRECTION
-        s = bytes([0x10, 0x01])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR2 (LEFT) DIRECTION
-        s = bytes([0x11, 0x01])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR1 (RIGHT) POWER
-        s = bytes([0x12, self.speed])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR2 (LEFT) POWER
-        s = bytes([0x13, self.speed])
-        self.socket_connector.sendCommand(s)
-
-    def goLeft(self):
-        # MOTOR1 (RIGHT) DIRECTION
-        s = bytes([0x10, 0x00])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR2 (LEFT) DIRECTION
-        s = bytes([0x11, 0x01])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR1 (RIGHT) POWER
-        s = bytes([0x12, self.turning_speed])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR2 (LEFT) POWER
-        s = bytes([0x13, self.turning_speed])
-        self.socket_connector.sendCommand(s)
-
-    def goRight(self):
-        # MOTOR1 (RIGHT) DIRECTION
-        s = bytes([0x10, 0x01])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR2 (LEFT) DIRECTION
-        s = bytes([0x11, 0x00])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR1 (RIGHT) POWER
-        s = bytes([0x12, self.turning_speed])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR2 (LEFT) POWER
-        s = bytes([0x13, self.turning_speed])
-        self.socket_connector.sendCommand(s)
-
-    def stop(self):
-        # MOTOR1 (RIGHT) POWER
-        s = bytes([0x12, 0])
-        self.socket_connector.sendCommand(s)
-
-        # MOTOR2 (LEFT) POWER
-        s = bytes([0x13, 0])
-        self.socket_connector.sendCommand(s)
-'''

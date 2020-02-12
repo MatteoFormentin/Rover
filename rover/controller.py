@@ -4,7 +4,7 @@ from camera import *
 from queue import *
 from radar import *
 from gps import *
-from Compass import *
+from compass import *
 
 from threading import Thread
 
@@ -13,12 +13,13 @@ import json
 
 class Controller:
     def __init__(self):
+        print("INIT")
         self.motor = Motor()
 
         # NETWORK THREAD
-        self.queue = Queue()  # Shared queue
-        self.network = Network(self.queue)
-        self.network.start()
+        #self.queue = Queue()  # Shared queue
+        #self.network = Network(self.queue)
+        #self.network.start()
 
         # SENSORS SETUP
         self.gps = Gps()
@@ -26,8 +27,8 @@ class Controller:
         #self.radar = Radar()
 
         # CAMERA THREAD
-        self.camera = Camera()
-        self.camera.start()
+        #self.camera = Camera()
+        #self.camera.start()
 
         print("READY!")
 

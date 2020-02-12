@@ -10,6 +10,7 @@ class Camera(Thread):
         Thread.__init__(self)
         self.context = zmq.Context()
         self.footage_socket = self.context.socket(zmq.SUB)
+        
         self.footage_socket.connect('tcp://192.168.0.1:5555')
         self.footage_socket.setsockopt_string(zmq.SUBSCRIBE, np.unicode(''))
 
@@ -33,4 +34,5 @@ class Camera(Thread):
             pass
 
     def stop(self):
+        self.context.destroy()
         self.run_thread = False

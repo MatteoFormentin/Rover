@@ -4,19 +4,6 @@ import configparser
 
 class Motor:
     def __init__(self):
-        # Load configuration file
-        '''config = configparser.ConfigParser()
-        config.read('pin_configuration.ini')
-
-        self.RIGHT_IN1 = int(config['MOTOR']['RIGHT_IN1'])
-        self.RIGHT_IN2 = int(config['MOTOR']['RIGHT_IN2'])
-        self.LEFT_IN3 = int(config['MOTOR']['LEFT_IN3'])
-        self.LEFT_IN4 = int(config['MOTOR']['LEFT_IN4'])
-        self.RIGHT_PWM_ENA = int(config['MOTOR']['RIGHT_PWM_ENA'])
-        self.RIGHT_PWM_ENB = int(config['MOTOR']['RIGHT_PWM_ENB'])
-        self.COMP_SPEED_R = int(config['MOTOR']['COMP_SPEED_R'])
-        self.COMP_SPEED_L = int(config['MOTOR']['COMP_SPEED_L'])'''
-
         self.RIGHT_IN1 = 31
         self.RIGHT_IN2 = 33
         self.LEFT_IN3 = 35
@@ -45,6 +32,8 @@ class Motor:
 
         self.right_speed=0
         self.left_speed=0
+
+        print("motor okay")
 
     def handleShutdown(self):
         self.pwm_right.stop()

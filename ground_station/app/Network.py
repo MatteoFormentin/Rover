@@ -9,17 +9,28 @@ class Network():
         self.controller = controller
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PAIR)
+        self.socket.RCVTIMEO = 10000
+        self.connected = False
+        #self.socket.setsockopt(zmq.ZMQ_CONNECT_TIMEOUT, 1000)
+        
 
     def connect(self):
-        try:
-            print("connetto...")
-            self.socket.connect("tcp://" + HOST + ":" + PORT)
-            print("connesso!")
-        except Exception:
-            self.controller.showCheckConnectionDialog()
+        self.socket.connect("tcp://" + HOST + ":" + PORT)
+        self.connected = True
+
 
     def sendData(self, data):
         self.socket.send_string(data)
 
     def getData(self):
-        return self.socket.recv_string()
+        try:
+            data = self.socket.recv_string()
+        except Exception as e:
+            self.connected = False
+            self.controller.showCheckConnectionDialog()
+            return
+        return data
+
+    def disconnect(self):
+        if self.connected:
+            self.context.destroy()

@@ -15,6 +15,7 @@ class Gps:
         self.gps.send_command(b'PMTK220,1000')
         # Or decrease to once every two seconds by doubling the millisecond value.
         # Be sure to also increase your UART timeout above!
+        print("gps okay")
 
 
 def update(self):
@@ -22,4 +23,5 @@ def update(self):
 
 
 def getData(self):
+    print(self.gps)
     return self.gps

@@ -5,6 +5,7 @@ import py_qmc5883l
 class Compass:
     def __init__(self):
         self.sensor = py_qmc5883l.QMC5883L()
+        print("compass okay")
 
 
 def update(self):
