@@ -9,7 +9,7 @@ class Network():
         self.controller = controller
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PAIR)
-        self.socket.RCVTIMEO = 10000
+        self.socket.RCVTIMEO = 100000
         self.connected = False
         #self.socket.setsockopt(zmq.ZMQ_CONNECT_TIMEOUT, 1000)
         
@@ -23,6 +23,7 @@ class Network():
         self.socket.send_string(data)
 
     def getData(self):
+        print("START GET")
         try:
             data = self.socket.recv_string()
         except Exception as e:
@@ -30,6 +31,8 @@ class Network():
             self.controller.showCheckConnectionDialog()
             return
         return data
+        print("END GET")
+
 
     def disconnect(self):
         if self.connected:

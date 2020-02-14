@@ -7,28 +7,28 @@ from gps import *
 from compass import *
 
 from threading import Thread
-
+import time
 import json
-
 
 class Controller:
     def __init__(self):
-        print("INIT")
         self.motor = Motor()
 
         # NETWORK THREAD
-        #self.queue = Queue()  # Shared queue
-        #self.network = Network(self.queue)
-        #self.network.start()
+        self.queue = Queue()  # Shared queue
+        self.network = Network(self.queue)
+        self.network.start()
 
         # SENSORS SETUP
-        self.gps = Gps()
+        #self.gps = Gps()
         self.compass = Compass()
-        #self.radar = Radar()
+        self.radar = Radar()
 
         # CAMERA THREAD
-        #self.camera = Camera()
-        #self.camera.start()
+        self.camera = Camera()
+        self.camera.start()
+
+        self.ground_station_ip_address = "0"
 
         print("READY!")
 
@@ -46,7 +46,9 @@ class Controller:
 
                         # CAMERA STREAM COMMANDS
                         if c['command'] == 'C_Stream_S':
-                            self.motor.setRightMotorDirection(c['value'])
+                            self.ground_station_ip_address = c['value']
+                            self.camera.setGroundStationIpAddress(self.ground_station_ip_address)
+                            self.camera.startVideoStream()
 
                         # MOTORS COMMANDS
                         if c['command'] == 'RM_dir':
@@ -62,38 +64,33 @@ class Controller:
                             self.motor.setLeftMotorSpeed(c['value'])
 
                 # HERE ALL SENSORS LOOPS
-                self.gps.update()
+                #self.gps.update()
+                self.radar.update()
 
             except KeyboardInterrupt:
                 self.motor.handleShutdown()
                 self.camera.stop()
                 self.network.stop()
-                # self.camera.join()
-                # self.network.join()
+                self.camera.join()
+                self.network.join()
                 exit()
 
     def collectAllData(self):
-        gps_data = self.gps.getData()
-        return json.dumps({
+        #gps_data = self.gps.getData()
+
+        data =  json.dumps({
             "motor": {
                 "state": "STOP",
                 "left_power": self.motor.getLeftMotorSpeed(),
                 "right_power": self.motor.getRightMotorSpeed()
             },
-            "gps": {
-                "fix": gps_data.has_fix,
-                "fix_quality": gps_data.fix_quality,
-                "satellites": gps_data.satellites,
-                "latitude": gps_data.latitude,
-                "longitude": gps_data.longitude,
-                "speed": gps_data.speed_knots,
-                "altitude": gps_data.altitude_m
-            },
-            "compass": self.compass.getBearing()
-
-
-            # "radar": self.radar.getDistances()
+          
+            "compass": self.compass.getBearing(),
+            "radar": self.radar.getDistances()
         })
+
+        return data
+
 
 
 '''JSON MESSAGE TO GROUND STATION
@@ -113,4 +110,15 @@ class Controller:
         "right_power": 100
     }
 }
+
+"gps": {
+    "fix": gps_data.has_fix,
+    "fix_quality": gps_data.fix_quality,
+    "satellites": gps_data.satellites,
+    "latitude": gps_data.latitude,
+    "longitude": gps_data.longitude,
+    "speed": gps_data.speed_knots,
+    "altitude": gps_data.altitude_m
+},
+
 '''

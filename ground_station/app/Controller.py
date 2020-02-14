@@ -10,7 +10,7 @@ import sys
 REFRESH_RATE = 100
 ENABLE_JOYSTCK = True
 ENABLE_NETWORK = True
-ENABLE_CAMERA = False
+ENABLE_CAMERA = True
 
 SPEED = 100
 TURNING_SPEED = 80
@@ -49,6 +49,7 @@ class Controller:
         if ENABLE_CAMERA:
             self.camera = Camera()
             self.camera.start()
+            self.startVideoStream()
             self.updateCamera()
 
         # set default scale value
@@ -57,7 +58,7 @@ class Controller:
         self.mainView.getButtons().updateAutoSpeed(AUTO_SPEED)
         self.mainView.getButtons().updateAutoTurningSpeed(AUTO_TURNING_SPEED)
 
-        self.mainView.pack()
+        self.mainView.pack()  # let here otherwise crash
 
     def run(self):
         self.app.mainloop()
@@ -65,7 +66,7 @@ class Controller:
 
     def on_closing(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
-           self.quitApp()
+            self.quitApp()
 
     def quitApp(self):
         if ENABLE_NETWORK:
@@ -73,7 +74,8 @@ class Controller:
         if ENABLE_CAMERA:
             self.camera.stop()
         if ENABLE_JOYSTCK:
-            self.controller.stop()
+            self.joystick.stop()
+            self.joystick.destroy()
         self.app.destroy()
         sys.exit()
 
@@ -93,11 +95,11 @@ class Controller:
         if not len(received) == 0:
             print(received)
             data = json.loads(received)
-           # print(data["radar"])
-           # self.mainView.updateRadar(data["radar"])
+            print(data["radar"])
+            self.mainView.updateRadar(data["radar"])
             self.mainView.updateMotorData(data["motor"], 100)
             # self.mainView.updateGPSData(data["gps"])
-            # self.mainView.updateCompass(data["compass"])
+            self.mainView.updateCompass(data["compass"])
             # self.mainView.getButtons().updateMode(data["mode"])
 
         self.app.after(REFRESH_RATE, self.updateData)
@@ -149,6 +151,19 @@ class Controller:
         return self.auto_turning_speed
 
     # COMMAND SEND
+    def startVideoStream(self):
+        data = {
+            'commands': [
+                {
+                    'command': 'C_Stream_S',
+                    'value': self.camera.getIp()
+                }
+            ]
+        }
+
+        self.network.sendData(json.dumps(data))
+        self.camera.startVideoStream()
+
     def setRemoteMode(self):
         pass
 
