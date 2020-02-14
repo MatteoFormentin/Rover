@@ -41,7 +41,7 @@ class GPSData(Canvas):
 
     def update(self, gps_data):
         # print(gps_data)
-        if gps_data["state"] == 0:
+        if gps_data["fix"] == 0:
             self.itemconfig(self.state_value,
                             text="Not Fix", fill="red")
             self.itemconfig(self.speed_value,
@@ -54,8 +54,8 @@ class GPSData(Canvas):
                             text="N/A", fill="red")
 
         else:
-            lat = self.parseCoord(gps_data["latitude"])
-            lon = self.parseCoord(gps_data["longitude"])
+            lat = gps_data["latitude"]
+            lon = gps_data["longitude"]
             self.itemconfig(self.state_value,
                             text="Fix", fill="green")
             self.itemconfig(self.speed_value,

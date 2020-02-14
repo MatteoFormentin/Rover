@@ -10,6 +10,7 @@ from threading import Thread
 import time
 import json
 
+
 class Controller:
     def __init__(self):
         self.motor = Motor()
@@ -20,7 +21,7 @@ class Controller:
         self.network.start()
 
         # SENSORS SETUP
-        #self.gps = Gps()
+        self.gps = Gps()
         self.compass = Compass()
         self.radar = Radar()
 
@@ -47,7 +48,8 @@ class Controller:
                         # CAMERA STREAM COMMANDS
                         if c['command'] == 'C_Stream_S':
                             self.ground_station_ip_address = c['value']
-                            self.camera.setGroundStationIpAddress(self.ground_station_ip_address)
+                            self.camera.setGroundStationIpAddress(
+                                self.ground_station_ip_address)
                             self.camera.startVideoStream()
 
                         # MOTORS COMMANDS
@@ -64,7 +66,7 @@ class Controller:
                             self.motor.setLeftMotorSpeed(c['value'])
 
                 # HERE ALL SENSORS LOOPS
-                #self.gps.update()
+                self.gps.update()
                 self.radar.update()
 
             except KeyboardInterrupt:
@@ -76,21 +78,30 @@ class Controller:
                 exit()
 
     def collectAllData(self):
-        #gps_data = self.gps.getData()
+        gps_data = self.gps.getData()
 
-        data =  json.dumps({
+        data = json.dumps({
             "motor": {
                 "state": "STOP",
                 "left_power": self.motor.getLeftMotorSpeed(),
                 "right_power": self.motor.getRightMotorSpeed()
             },
-          
+
             "compass": self.compass.getBearing(),
-            "radar": self.radar.getDistances()
+            "radar": self.radar.getDistances(),
+
+            "gps": {
+                "fix": gps_data.has_fix,
+                "fix_quality": gps_data.fix_quality,
+                "satellites": gps_data.satellites,
+                "latitude": round(gps_data.latitude, 4),
+                "longitude": round(gps_data.longitude, 4),
+                "speed": gps_data.speed_knots,
+                "altitude": gps_data.altitude_m
+            }
         })
 
         return data
-
 
 
 '''JSON MESSAGE TO GROUND STATION
@@ -111,14 +122,6 @@ class Controller:
     }
 }
 
-"gps": {
-    "fix": gps_data.has_fix,
-    "fix_quality": gps_data.fix_quality,
-    "satellites": gps_data.satellites,
-    "latitude": gps_data.latitude,
-    "longitude": gps_data.longitude,
-    "speed": gps_data.speed_knots,
-    "altitude": gps_data.altitude_m
-},
+
 
 '''

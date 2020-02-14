@@ -23,8 +23,6 @@ class Gps:
 
     def update(self):
         self.gps_sensor.update()
-        print(self.gps_sensor)
 
     def getData(self):
-        print(self.gps_sensor)
         return self.gps_sensor

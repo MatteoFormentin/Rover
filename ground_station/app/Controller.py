@@ -10,7 +10,7 @@ import sys
 REFRESH_RATE = 100
 ENABLE_JOYSTCK = True
 ENABLE_NETWORK = True
-ENABLE_CAMERA = True
+ENABLE_CAMERA = False
 
 SPEED = 100
 TURNING_SPEED = 80
@@ -93,13 +93,12 @@ class Controller:
         print(received)
 
         if not len(received) == 0:
-            print(received)
             data = json.loads(received)
-            print(data["radar"])
             self.mainView.updateRadar(data["radar"])
             self.mainView.updateMotorData(data["motor"], 100)
-            # self.mainView.updateGPSData(data["gps"])
+            self.mainView.updateGPSData(data["gps"])
             self.mainView.updateCompass(data["compass"])
+
             # self.mainView.getButtons().updateMode(data["mode"])
 
         self.app.after(REFRESH_RATE, self.updateData)

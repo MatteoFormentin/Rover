@@ -23,15 +23,14 @@ class Network():
         self.socket.send_string(data)
 
     def getData(self):
-        print("START GET")
         try:
             data = self.socket.recv_string()
         except Exception as e:
+            print(e)
             self.connected = False
             self.controller.showCheckConnectionDialog()
             return
         return data
-        print("END GET")
 
 
     def disconnect(self):

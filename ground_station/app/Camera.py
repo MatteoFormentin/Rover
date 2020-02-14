@@ -11,6 +11,7 @@ class Camera(Thread):
         self.run_thread = True
         self.curr_frame = None
 
+
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.serversocket.bind((self.getIp(), 7777))
 
@@ -32,9 +33,8 @@ class Camera(Thread):
 
         while self.run_thread:
             if self.video_stream_status:
-                d, a = serversocket.recvfrom(4096)  # Check if a chunks arrived
+                d, a = self.serversocket.recvfrom(4096)  # Check if a chunks arrived
                 if d:
-                    print(d)
                     # sequence number, number of chunks of the frame, current chunks, chunks data
                     packet_seq, tot, curr, data = self.decodePacket(d)
 
