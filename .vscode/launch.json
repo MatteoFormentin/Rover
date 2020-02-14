@@ -10,13 +10,6 @@
             "request": "launch",
             "program": "${workspaceFolder}/ground_station/main.py",
             "console": "integratedTerminal"
-        },
-        {
-            "name": "test",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/test.py",
-            "console": "integratedTerminal"
         }
     ]
 }

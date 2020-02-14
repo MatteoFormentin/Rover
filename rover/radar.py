@@ -49,12 +49,21 @@ class Radar:
         GPIO.output(trigger, False)
         start_time = time.time()
         end_time = time.time()
+        print()
+        print("ECHO=0")
+        start_echo_time = time.time()
         while GPIO.input(echo) == 0:
+            if time.time() - start_echo_time > 0.006:  # At 0 no echo is detected
+                return 0
             start_time = time.time()
+        print("ECHO=1")
+
         while GPIO.input(echo) == 1:
             if time.time() - start_time > 0.006:  # Limit to 100 cm
                 return 100
             end_time = time.time()
+        print("ECHO=0-2")
+        print()
 
         distance = int((end_time - start_time) * 34300 / 2)
         return distance

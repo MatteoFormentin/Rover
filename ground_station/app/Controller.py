@@ -10,7 +10,7 @@ import sys
 REFRESH_RATE = 100
 ENABLE_JOYSTCK = True
 ENABLE_NETWORK = True
-ENABLE_CAMERA = False
+ENABLE_CAMERA = True
 
 SPEED = 100
 TURNING_SPEED = 80
@@ -69,13 +69,19 @@ class Controller:
             self.quitApp()
 
     def quitApp(self):
+        print("Start quit")
         if ENABLE_NETWORK:
             self.network.disconnect()
+            print("Network quit")
         if ENABLE_CAMERA:
             self.camera.stop()
+            print("Camera quit")
+
         if ENABLE_JOYSTCK:
             self.joystick.stop()
             self.joystick.destroy()
+            print("joystick quit")
+
         self.app.destroy()
         sys.exit()
 

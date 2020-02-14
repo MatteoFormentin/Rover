@@ -94,10 +94,10 @@ class Controller:
                 "fix": gps_data.has_fix,
                 "fix_quality": gps_data.fix_quality,
                 "satellites": gps_data.satellites,
-                "latitude": round(gps_data.latitude, 4),
-                "longitude": round(gps_data.longitude, 4),
-                "speed": gps_data.speed_knots,
-                "altitude": gps_data.altitude_m
+                "latitude": round(gps_data.latitude, 4) if gps_data.latitude != None else "" ,
+                "longitude": round(gps_data.longitude, 4) if gps_data.longitude != None else "",
+                "speed": gps_data.speed_knots if gps_data.speed_knots != None else "",
+                "altitude": gps_data.altitude_m if gps_data.altitude_m != None else ""
             }
         })
 

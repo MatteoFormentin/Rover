@@ -48,7 +48,7 @@ class Camera(Thread):
         return jpg_as_text  # output byte array
 
     def generatePacket(self, data, seq_number):
-        packet_dimension = 4096 - 30  # Byte dimension of packet
+        packet_dimension = 4096 - 8  # Byte dimension of packet
         # number of packet to be generated to contain all data
         packet_number = math.ceil(len(data)/packet_dimension)
 
@@ -56,10 +56,10 @@ class Camera(Thread):
         for i in range(0, packet_number):
             # Genrate packet header
             # Structure
-            # |Sequence Number(10)|Packet Number(5)|Current Packet(5)|Data(packet_dimension - 20)|
+            # |Sequence Number(2)|Packet Number(2)|Current Packet(2)|Data(packet_dimension - 20)|
             header = seq_number.to_bytes(
-                10, "little", signed=False) + packet_number.to_bytes(
-                10, "little", signed=False) + i.to_bytes(10, "little", signed=False)
+                2, "little", signed=False) + packet_number.to_bytes(
+                2, "little", signed=False) + i.to_bytes(2, "little", signed=False)
 
             # Split data into packets
             start = i * packet_dimension

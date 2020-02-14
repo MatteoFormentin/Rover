@@ -28,5 +28,6 @@ class CameraWindow(Canvas):
             # otherwise, simply update the panel
             else:
                 self.itemconfig(self.curr_frame, image=self.image)
-        except Exception:
+        except Exception as e:
+            print(e)
             pass
