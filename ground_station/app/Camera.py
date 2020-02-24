@@ -44,8 +44,10 @@ class Camera(Thread):
                         counter = 0
 
                     # Put chunk in order
-                    packets[curr] = data
-                    counter += 1
+                    # out of synch only if new frame arrived (wait for a new one)
+                    if counter == curr:
+                        packets[curr] = data
+                        counter += 1
 
                     # if number of chunks received = total chunks number of the frame assemble and show the image
                     if counter == tot:
@@ -53,14 +55,13 @@ class Camera(Thread):
                         for i in range(0, tot):
                             img = img + packets[i]
 
-                        try:
-                            npimg = np.fromstring(
-                                base64.b64decode(img), dtype=np.uint8)
+                        b64 = base64.b64decode(img)
+                        if b64[0:2] == b'\xff\xd8' and b64[-2:] == b'\xff\xd9': #JPG checksum
+                            npimg = np.fromstring(b64, dtype=np.uint8)
                             source = cv2.imdecode(npimg, 1)
                             self.curr_frame = cv2.cvtColor(
                                 source, cv2.COLOR_BGR2RGB)
-                        except Exception:
-                            pass
+                      
 
     def getFrame(self):
        return self.curr_frame

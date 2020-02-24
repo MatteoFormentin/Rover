@@ -8,7 +8,7 @@ import json
 import sys
 
 REFRESH_RATE = 100
-ENABLE_JOYSTCK = True
+ENABLE_JOYSTCK = False
 ENABLE_NETWORK = True
 ENABLE_CAMERA = True
 
@@ -65,22 +65,18 @@ class Controller:
         # except UnicodeDecodeError:
 
     def on_closing(self):
-        if messagebox.askokcancel("Quit", "Do you want to quit?"):
-            self.quitApp()
+        # if messagebox.askokcancel("Quit", "Do you want to quit?"):
+        self.quitApp()
 
     def quitApp(self):
-        print("Start quit")
         if ENABLE_NETWORK:
             self.network.disconnect()
-            print("Network quit")
         if ENABLE_CAMERA:
             self.camera.stop()
-            print("Camera quit")
 
         if ENABLE_JOYSTCK:
             self.joystick.stop()
             self.joystick.destroy()
-            print("joystick quit")
 
         self.app.destroy()
         sys.exit()
@@ -96,7 +92,7 @@ class Controller:
 
         self.network.sendData(json.dumps(data))
         received = self.network.getData()
-        print(received)
+        # print(received)
 
         if not len(received) == 0:
             data = json.loads(received)
@@ -125,7 +121,7 @@ class Controller:
 
     def updateCamera(self):
         self.mainView.updateCameraWindow(self.camera.getFrame())
-        self.app.after(1, self.updateCamera)
+        self.app.after(15, self.updateCamera)
 
     def setSpeed(self, speed):
         self.speed = speed
