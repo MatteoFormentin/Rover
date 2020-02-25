@@ -18,4 +18,4 @@ Ground Station Feature:
 - Coordinates navigation using GPs + Compass (On development, not released)
 - Line follower using camera (On development, not released)
 
-![Image of Ground Station](https://github.com/MatteoFormentin/Rover/dev_file/img/ground_station.png)
+![Image of Ground Station](https://github.com/MatteoFormentin/Rover/dev_file/img/ground_station.jpg)
