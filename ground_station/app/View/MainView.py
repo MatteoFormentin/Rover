@@ -22,17 +22,17 @@ class MainView(Frame):
         self.motor_data.grid(row=0, column=0)
 
         self.buttons = Buttons(self, self.controller)
-        self.buttons.grid(row=0, column=1)
+        self.buttons.grid(row=1, column=1)
 
         self.gps_plot = GPSPlot(self)
         self.gps_plot.canvas.get_tk_widget().grid(
-            row=1, column=1)
+            row=1, column=2, columnspan=2)
 
         self.gps_data = GPSData(self, self.gps_plot)
         self.gps_data.grid(row=1, column=0)
 
         self.camera_window = CameraWindow(self)
-        self.camera_window.grid(row=1, column=2, columnspan=2)
+        self.camera_window.grid(row=0, column=1, columnspan=1)
 
         self.compass = Compass(self)
         self.compass.grid(row=0, column=3)
@@ -49,8 +49,8 @@ class MainView(Frame):
     def updateCompass(self, heading):
         self.compass.updateHeading(heading)
     
-    def updateCameraWindow(self, img):
-        self.camera_window.updateCameraWindow(img)
+    def updateCameraWindow(self, img, fps):
+        self.camera_window.updateCameraWindow(img, fps)
 
     def getButtons(self):
        return self.buttons

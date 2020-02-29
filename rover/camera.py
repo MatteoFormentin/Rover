@@ -3,7 +3,7 @@ import base64
 import cv2
 import math
 import socket
-
+import time
 
 class Camera(Thread):
     def __init__(self):
@@ -17,9 +17,22 @@ class Camera(Thread):
         self.run_thread = True
         self.video_stream_status = False
 
+        self.fps = 0
+
     def run(self):
+        last_reset = time.time()
+        rcv_frame_delta = 0
         while self.run_thread:
             if self.video_stream_status:
+
+                #FPS CALC
+                delta = time.time() - last_reset
+                if delta > 1:
+                    last_reset = time.time()
+                    self.fps = int(rcv_frame_delta / delta)
+                    rcv_frame_delta = 0
+                #END
+
                 img = self.getVideoFrame()
                 data = self.generatePacket(img, self.seq_number)
 
@@ -28,6 +41,10 @@ class Camera(Thread):
                         i, (self.ground_station_ip_address, 7777))
 
                 self.seq_number += 1
+                
+                rcv_frame_delta += 1
+
+                #print("FPS: " + str(self.fps) + "        ", end='\r')
 
     def stop(self):
         self.run_thread = False
@@ -42,7 +59,7 @@ class Camera(Thread):
 
     def getVideoFrame(self):
         grabbed, frame = self.camera.read()  # grab the current frame
-        frame = cv2.resize(frame, (640, 480))  # resize the frame
+        frame = cv2.resize(frame, (320, 240))  # resize the frame
         encoded, buffer = cv2.imencode('.jpg', frame)
         jpg_as_text = base64.b64encode(buffer)
         return jpg_as_text  # output byte array
@@ -67,8 +84,8 @@ class Camera(Thread):
             packet = header + data[start:end]
             packets.append(packet)
 
-            #print()
-            #print("Header| " + " Seq: " + str(seq_number) + " | Total: " +
+            # print()
+            # print("Header| " + " Seq: " + str(seq_number) + " | Total: " +
             #      str(packet_number) + " | Curr: " + str(i) + "|")
 
         return packets

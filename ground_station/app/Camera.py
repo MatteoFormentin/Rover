@@ -3,6 +3,7 @@ import socket
 import base64
 import numpy as np
 from threading import Thread
+import time
 
 
 class Camera(Thread):
@@ -15,6 +16,8 @@ class Camera(Thread):
         self.serversocket.bind((self.getIp(), 7777))
 
         self.video_stream_status = False
+
+        self.fps = 0
 
     def startVideoStream(self):
         self.video_stream_status = True
@@ -29,9 +32,16 @@ class Camera(Thread):
         packets = [None] * 100
         seq = -1  # Sequence number of frames
         counter = 0  # Count how many chunks of the current frame already received
-
+        last_reset = time.time()
+        rcv_frame_delta = 0
         while self.run_thread:
             if self.video_stream_status:
+                delta = time.time() - last_reset
+                if delta > 0.2:
+                    last_reset = time.time()
+                    self.fps = int(rcv_frame_delta / delta)
+                    rcv_frame_delta = 0
+
                 d, a = self.serversocket.recvfrom(
                     4096)  # Check if a chunks arrived
                 if d:
@@ -44,10 +54,10 @@ class Camera(Thread):
                         counter = 0
 
                     # Put chunk in order
-                    # out of synch only if new frame arrived (wait for a new one)
-                    if counter == curr:
-                        packets[curr] = data
-                        counter += 1
+                    # out of synch only if new frame arrived (wait for a new one) - ERROR! out of synch if order of frame change
+                    #if counter == curr:
+                    packets[curr] = data
+                    counter += 1
 
                     # if number of chunks received = total chunks number of the frame assemble and show the image
                     if counter == tot:
@@ -56,15 +66,18 @@ class Camera(Thread):
                             img = img + packets[i]
 
                         b64 = base64.b64decode(img)
-                        if b64[0:2] == b'\xff\xd8' and b64[-2:] == b'\xff\xd9': #JPG checksum
+                        if b64[0:2] == b'\xff\xd8' and b64[-2:] == b'\xff\xd9':  # JPG checksum
                             npimg = np.fromstring(b64, dtype=np.uint8)
                             source = cv2.imdecode(npimg, 1)
+                            rcv_frame_delta += 1
                             self.curr_frame = cv2.cvtColor(
                                 source, cv2.COLOR_BGR2RGB)
-                      
 
     def getFrame(self):
-       return self.curr_frame
+        return self.curr_frame
+
+    def getFPS(self):
+        return self.fps
 
     def stop(self):
         self.run_thread = False

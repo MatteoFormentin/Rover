@@ -6,6 +6,7 @@ from app.Camera import *
 from app.Joystick import *
 import json
 import sys
+from queue import *
 
 REFRESH_RATE = 100
 ENABLE_JOYSTCK = False
@@ -47,6 +48,7 @@ class Controller:
             self.joystick.processEvent()
 
         if ENABLE_CAMERA:
+            self.camera_queue = Queue(30)
             self.camera = Camera()
             self.camera.start()
             self.startVideoStream()
@@ -120,7 +122,7 @@ class Controller:
         self.quitApp()
 
     def updateCamera(self):
-        self.mainView.updateCameraWindow(self.camera.getFrame())
+        self.mainView.updateCameraWindow(self.camera.getFrame(), self.camera.getFPS())
         self.app.after(15, self.updateCamera)
 
     def setSpeed(self, speed):
