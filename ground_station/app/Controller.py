@@ -67,11 +67,8 @@ class Controller:
 
         self.mainView.pack()  # let here otherwise crash
 
-        self.takePhoto()
-
     def run(self):
         self.app.mainloop()
-        # except UnicodeDecodeError:
 
     def on_closing(self):
         # if messagebox.askokcancel("Quit", "Do you want to quit?"):
