@@ -20,6 +20,9 @@ class Network(Thread):
     def sendData(self, data):
         self.socket.send_string(data)
 
+    def sendBytes(self, data):
+        self.socket.send(data)
+
     def run(self):
         while self.run_thread:
             self.queue.put(self.getData())

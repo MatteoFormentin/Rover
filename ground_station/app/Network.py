@@ -12,12 +12,10 @@ class Network():
         self.socket.RCVTIMEO = 100000
         self.connected = False
         #self.socket.setsockopt(zmq.ZMQ_CONNECT_TIMEOUT, 1000)
-        
 
     def connect(self):
         self.socket.connect("tcp://" + HOST + ":" + PORT)
         self.connected = True
-
 
     def sendData(self, data):
         self.socket.send_string(data)
@@ -32,6 +30,15 @@ class Network():
             return
         return data
 
+    def getBytes(self):
+        try:
+            data = self.socket.recv()
+        except Exception as e:
+            print(e)
+            self.connected = False
+            self.controller.showCheckConnectionDialog()
+            return
+        return data
 
     def disconnect(self):
         if self.connected:

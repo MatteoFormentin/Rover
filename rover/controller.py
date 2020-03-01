@@ -52,6 +52,10 @@ class Controller:
                                 self.ground_station_ip_address)
                             self.camera.startVideoStream()
 
+                        if c['command'] == 'C_Take_Photo':
+                            img_encoded = self.camera.takePhoto()
+                            self.network.sendBytes(img_encoded)
+
                         # MOTORS COMMANDS
                         if c['command'] == 'RM_dir':
                             self.motor.setRightMotorDirection(c['value'])

@@ -18,6 +18,7 @@ class Camera(Thread):
         self.video_stream_status = False
 
         self.fps = 0
+        self.frame = 0
 
     def run(self):
         last_reset = time.time()
@@ -57,10 +58,11 @@ class Camera(Thread):
     def stopVideoStream(self):
         self.video_stream_status = False
 
-    def getVideoFrame(self):
-        grabbed, frame = self.camera.read()  # grab the current frame
-        frame = cv2.resize(frame, (320, 240))  # resize the frame
-        encoded, buffer = cv2.imencode('.jpg', frame)
+    def getVideoFrame(self, full_res=False):
+        grabbed, self.frame = self.camera.read()  # grab the current frame
+        # resize the frame
+        f = cv2.resize(self.frame, (320, 240))
+        encoded, buffer = cv2.imencode('.jpg', f)
         jpg_as_text = base64.b64encode(buffer)
         return jpg_as_text  # output byte array
 
@@ -92,3 +94,8 @@ class Camera(Thread):
 
     def setGroundStationIpAddress(self, ip):
         self.ground_station_ip_address = ip
+
+    def takePhoto(self):
+        encoded, buffer = cv2.imencode('.jpg', self.frame)
+        jpg_as_text = base64.b64encode(buffer)
+        return jpg_as_text

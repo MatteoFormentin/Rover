@@ -20,11 +20,14 @@ class Buttons(Frame):
 
         self.status_label = Label(
             self, text="REMOTE MODE",  background="#282828", fg="green",  font=("Helvetica", 24))
-        self.status_label.grid(row=0, column=0, rowspan=2, pady=(50,0))
+        self.status_label.grid(row=0, column=0, rowspan=2, pady=(50, 0))
 
         self.auto_button = Button(
             self, text="Auto Mode", background="#282828", highlightbackground="#282828", width=BUTTON_WIDTH, command=self.autoButtonPressed)
         self.auto_button.grid(row=2, column=0, padx=(50, 50))
+        self.photo_button = Button(
+            self, text="Take Photo", background="#282828", highlightbackground="#282828", width=BUTTON_WIDTH, command=self.photoButtonPressed)
+        self.photo_button.grid(row=3, column=0)
 
         self.speed = Scale(
             self, from_=0, to=100, orient=HORIZONTAL,  background="#282828", fg="white", length=SLIDER_LENGHT, label="Speed",
@@ -49,6 +52,9 @@ class Buttons(Frame):
 
         if self.mode == 1:
             self.controller.setRemoteMode()
+
+    def photoButtonPressed(self):
+        self.controller.takePhoto()
 
     def updateMode(self, mode):
         if mode != self.mode:

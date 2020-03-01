@@ -7,6 +7,11 @@ from app.Joystick import *
 import json
 import sys
 from queue import *
+import cv2
+import base64
+import numpy as np
+import os
+import time
 
 REFRESH_RATE = 100
 ENABLE_JOYSTCK = False
@@ -61,6 +66,8 @@ class Controller:
         self.mainView.getButtons().updateAutoTurningSpeed(AUTO_TURNING_SPEED)
 
         self.mainView.pack()  # let here otherwise crash
+
+        self.takePhoto()
 
     def run(self):
         self.app.mainloop()
@@ -122,8 +129,30 @@ class Controller:
         self.quitApp()
 
     def updateCamera(self):
-        self.mainView.updateCameraWindow(self.camera.getFrame(), self.camera.getFPS())
+        self.mainView.updateCameraWindow(
+            self.camera.getFrame(), self.camera.getFPS())
         self.app.after(15, self.updateCamera)
+
+    def takePhoto(self):
+        data = {
+            'commands': [
+                {
+                    'command': 'C_Take_Photo'
+                }
+            ]
+        }
+
+        self.network.sendData(json.dumps(data))
+        received = self.network.getData()
+        b64 = base64.b64decode(received)
+        npimg = np.fromstring(b64, dtype=np.uint8)
+        source = cv2.imdecode(npimg, 1)
+
+        image = cv2.cvtColor(source, cv2.COLOR_BGR2RGB)
+
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+        cv2.imwrite(os.path.expanduser('~') +
+                    '/Desktop/photo-' + timestr + '.jpg', image)
 
     def setSpeed(self, speed):
         self.speed = speed
