@@ -16,9 +16,9 @@ import os
 import time
 
 REFRESH_RATE = 100
-ENABLE_JOYSTCK = False
-ENABLE_NETWORK = False
-ENABLE_CAMERA = False
+ENABLE_JOYSTCK = True
+ENABLE_NETWORK = True
+ENABLE_CAMERA = True
 
 SPEED = 100
 TURNING_SPEED = 80
@@ -32,7 +32,7 @@ class Controller:
         self.app.resizable(width=False, height=False)
         self.app.wm_title("Rover Ground Station")
         self.app.wm_iconname("Rover Ground Station")
-        self.app.geometry("1420x620")  # 900x700
+        self.app.geometry("1300x620")  # 900x700
         self.app.configure(background="#282828")
         self.app.protocol("WM_DELETE_WINDOW", self.on_closing)
 
@@ -52,7 +52,6 @@ class Controller:
 
         if ENABLE_JOYSTCK:
             self.joystick = Joystick(self)
-            self.joystick.processEvent()
 
         if ENABLE_CAMERA:
             self.camera_queue = Queue(30)
@@ -81,10 +80,6 @@ class Controller:
             self.network.disconnect()
         if ENABLE_CAMERA:
             self.camera.stop()
-
-        if ENABLE_JOYSTCK:
-            self.joystick.stop()
-            self.joystick.destroy()
 
         self.app.destroy()
         sys.exit()
@@ -126,9 +121,9 @@ class Controller:
     def showCheckControllerDialog(self):
         messagebox.showerror(
             "Controller not Found",
-            "Connect the rover controller and restart Ground Station"
+            "Use the virtual controller to control the rover"
         )
-        self.quitApp()
+        # self.quitApp()
 
     def updateCamera(self):
         self.mainView.updateCameraWindow(
