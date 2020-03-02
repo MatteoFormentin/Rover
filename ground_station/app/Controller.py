@@ -4,6 +4,8 @@ from app.View.MainView import *
 from app.Network import *
 from app.Camera import *
 from app.Joystick import *
+from app.View.ControllerWindow import *
+
 import json
 import sys
 from queue import *
@@ -15,8 +17,8 @@ import time
 
 REFRESH_RATE = 100
 ENABLE_JOYSTCK = False
-ENABLE_NETWORK = True
-ENABLE_CAMERA = True
+ENABLE_NETWORK = False
+ENABLE_CAMERA = False
 
 SPEED = 100
 TURNING_SPEED = 80
@@ -86,6 +88,9 @@ class Controller:
 
         self.app.destroy()
         sys.exit()
+
+    def showControllerWindow(self):
+        self.top = ControllerWindow(self)
 
     def updateData(self):
         data = {
