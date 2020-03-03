@@ -72,6 +72,7 @@ class Controller:
                 # HERE ALL SENSORS LOOPS
                 self.gps.update()
                 self.radar.update()
+                self.motor.tickCounterUpdate()
 
             except KeyboardInterrupt:
                 self.motor.handleShutdown()
@@ -88,7 +89,11 @@ class Controller:
             "motor": {
                 "state": "STOP",
                 "left_power": self.motor.getLeftMotorSpeed(),
-                "right_power": self.motor.getRightMotorSpeed()
+                "right_power": self.motor.getRightMotorSpeed(),
+                "left_tick" : self.motor.getLeftTick(),
+                "right_tick": self.motor.getRightTick(),
+                "left_rpm": self.motor.getLeftRPM(),
+                "right_rpm": self.motor.getRightRPM()
             },
 
             "compass": self.compass.getBearing(),

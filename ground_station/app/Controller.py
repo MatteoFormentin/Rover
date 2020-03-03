@@ -98,7 +98,7 @@ class Controller:
 
         self.network.sendData(json.dumps(data))
         received = self.network.getData()
-        # print(received)
+        print(received)
 
         if not len(received) == 0:
             data = json.loads(received)
