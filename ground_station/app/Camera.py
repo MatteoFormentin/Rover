@@ -55,7 +55,7 @@ class Camera(Thread):
 
                     # Put chunk in order
                     # out of synch only if new frame arrived (wait for a new one) - ERROR! out of synch if order of frame change
-                    #if counter == curr:
+                    # if counter == curr:
                     packets[curr] = data
                     counter += 1
 

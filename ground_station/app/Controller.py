@@ -5,7 +5,6 @@ from app.Network import *
 from app.Camera import *
 from app.Joystick import *
 from app.View.ControllerWindow import *
-
 import json
 import sys
 from queue import *
@@ -87,30 +86,6 @@ class Controller:
     def showControllerWindow(self):
         self.top = ControllerWindow(self)
 
-    def updateData(self):
-        data = {
-            'commands': [
-                {
-                    'command': 'update'
-                }
-            ]
-        }
-
-        self.network.sendData(json.dumps(data))
-        received = self.network.getData()
-        print(received)
-
-        if not len(received) == 0:
-            data = json.loads(received)
-            self.mainView.updateRadar(data["radar"])
-            self.mainView.updateMotorData(data["motor"], 100)
-            self.mainView.updateGPSData(data["gps"])
-            self.mainView.updateCompass(data["compass"])
-
-            # self.mainView.getButtons().updateMode(data["mode"])
-
-        self.app.after(REFRESH_RATE, self.updateData)
-
     def showCheckConnectionDialog(self):
         messagebox.showerror(
             "Connection Error",
@@ -129,27 +104,6 @@ class Controller:
         self.mainView.updateCameraWindow(
             self.camera.getFrame(), self.camera.getFPS())
         self.app.after(15, self.updateCamera)
-
-    def takePhoto(self):
-        data = {
-            'commands': [
-                {
-                    'command': 'C_Take_Photo'
-                }
-            ]
-        }
-
-        self.network.sendData(json.dumps(data))
-        received = self.network.getData()
-        b64 = base64.b64decode(received)
-        npimg = np.fromstring(b64, dtype=np.uint8)
-        source = cv2.imdecode(npimg, 1)
-
-        image = cv2.cvtColor(source, cv2.COLOR_BGR2RGB)
-
-        timestr = time.strftime("%Y%m%d-%H%M%S")
-        cv2.imwrite(os.path.expanduser('~') +
-                    '/Desktop/photo-' + timestr + '.jpg', image)
 
     def setSpeed(self, speed):
         self.speed = speed
@@ -180,6 +134,30 @@ class Controller:
         return self.auto_turning_speed
 
     # COMMAND SEND
+    def updateData(self):
+        data = {
+            'commands': [
+                {
+                    'command': 'update'
+                }
+            ]
+        }
+
+        self.network.sendData(json.dumps(data))
+        received = self.network.getData()
+        print(received)
+
+        if not len(received) == 0:
+            data = json.loads(received)
+            self.mainView.updateRadar(data["radar"])
+            self.mainView.updateMotorData(data["motor"], 100)
+            self.mainView.updateGPSData(data["gps"])
+            self.mainView.updateCompass(data["compass"])
+
+            # self.mainView.getButtons().updateMode(data["mode"])
+
+        self.app.after(REFRESH_RATE, self.updateData)
+
     def startVideoStream(self):
         data = {
             'commands': [
@@ -192,6 +170,27 @@ class Controller:
 
         self.network.sendData(json.dumps(data))
         self.camera.startVideoStream()
+
+    def takePhoto(self):
+        data = {
+            'commands': [
+                {
+                    'command': 'C_Take_Photo'
+                }
+            ]
+        }
+
+        self.network.sendData(json.dumps(data))
+        received = self.network.getData()
+        b64 = base64.b64decode(received)
+        npimg = np.fromstring(b64, dtype=np.uint8)
+        source = cv2.imdecode(npimg, 1)
+
+        image = cv2.cvtColor(source, cv2.COLOR_BGR2RGB)
+
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+        cv2.imwrite(os.path.expanduser('~') +
+                    '/Desktop/photo-' + timestr + '.jpg', image)
 
     def setRemoteMode(self):
         pass

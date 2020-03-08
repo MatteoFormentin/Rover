@@ -5,6 +5,8 @@ from queue import *
 from radar import *
 from gps import *
 from compass import *
+from waypoint import *
+
 
 from threading import Thread
 import time
@@ -29,9 +31,18 @@ class Controller:
         self.camera = Camera()
         self.camera.start()
 
+        # WAYPOINT NAVIGATION CONTROLLER
+        self.waypoint_navigation = Waypoint(self.motor, self.gps, self.compass)
+
         self.ground_station_ip_address = "0"
 
-        print("READY!")
+
+        print("ROTATING")
+        while True:
+            self.waypoint_navigation.rotateToBearing(self.compass.getBearingNormalized(),
+                                                     180)
+
+        print("ROVER STARTED")
 
     def run(self):
         while True:
@@ -90,7 +101,7 @@ class Controller:
                 "state": "STOP",
                 "left_power": self.motor.getLeftMotorSpeed(),
                 "right_power": self.motor.getRightMotorSpeed(),
-                "left_tick" : self.motor.getLeftTick(),
+                "left_tick": self.motor.getLeftTick(),
                 "right_tick": self.motor.getRightTick(),
                 "left_rpm": self.motor.getLeftRPM(),
                 "right_rpm": self.motor.getRightRPM()

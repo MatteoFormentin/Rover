@@ -18,11 +18,20 @@ class Gps:
         self.gps_sensor.send_command(b'PMTK220,1000')
         # Or decrease to once every two seconds by doubling the millisecond value.
         # Be sure to also increase your UART timeout above!
-        print("gps okay")
 
 
     def update(self):
-        self.gps_sensor.update()
+        # On warm up the sensor 
+        try:
+            self.gps_sensor.update()
+        except Exception:
+            pass
 
     def getData(self):
         return self.gps_sensor
+
+    def isGpsFix(self):
+        return self.gps_sensor.has_fix
+
+    def getCurrentPoint(self):
+        return [self.gps_sensor.latitude, self.gps_sensor.longitude]

@@ -53,7 +53,6 @@ class Motor:
         self.right_speed = 0
         self.left_speed = 0
 
-        print("motor okay")
 
     def tickCounterUpdate(self):
         if GPIO.input(self.RIGHT_ENCODER) == 0 and self.right_status == True:
