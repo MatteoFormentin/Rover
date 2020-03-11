@@ -9,7 +9,7 @@ point = [0, 0]  # lat, lon
 
 class Waypoint:
     def __init__(self, motor, gps, compass):
-        self.rotationPID = PID(0.1, 0, 0, -100, 100)
+        self.rotationPID = PID(0.8, 0, 0, -100, 100)
         self.distancePID = PID(0.2, 0.1, 0, 0, 100)
 
         self.run = False
@@ -44,15 +44,14 @@ class Waypoint:
         # If destination reached
         if distance_to_dest < 1:
             self.current_waypoint_index += 1
+
         # If bearing of rover is wrong rotate to correct
         elif dest_bearing != curr_bearing:  # +- offeset
             speed = self.rotationPID.computeOutput(curr_bearing, dest_bearing)
-            if dest_bearing > curr_bearing:
-
+            if speed < 0:
                 self.motor.rotateLeft(speed)
 
-            if dest_bearing < curr_bearing:
-
+            if speed > 0:
                 self.motor.rotateRight(speed)
 
         # If correct bearing is correct and destination is far go forward
@@ -75,20 +74,19 @@ class Waypoint:
     # DEBUG ONLY
     def rotateToBearing(self, curr, dest):
         speed = self.rotationPID.computeOutput(curr, dest)
-        '''if speed < 10:
-            speed = 0'''
 
         print("speed: " + str(speed) + " curr: " +
               str(curr) + " dest: " +
               str(dest) + "        ")
 
-        if speed > 0:
-            print("rotate left")
+        # self.rotationPID.computeOutput(curr_bearing, dest_bearing)
+        if speed < 0:
+            print("left")
             self.motor.rotateLeft(speed)
 
-        elif speed < 0:
-            print("rotate right")
-            self.motor.rotateRight(-1 * speed)
+        if speed > 0:
+            print("right")
+            self.motor.rotateRight(speed)
 
         # DEBUG ONLY
         if curr == dest:
@@ -102,6 +100,7 @@ class Waypoint:
 
     def computeBearing(self, p1, p2):
         ''' Compute bearing between point 1 and 2 '''
+
         lat1 = math.radians(p1[0])
         lat2 = math.radians(p2[0])
 
@@ -112,9 +111,15 @@ class Waypoint:
         x = math.cos(lat1)*math.sin(lat2) - math.sin(lat1) * \
             math.cos(lat2)*math.cos(lon2-lon1)
         brng = math.degrees(math.atan2(y, x))
+
+        if brng > 180:
+            brng -= 360
+
         return brng
 
     def computeDistance(self, p1, p2):
+        ''' Compute DISTANCE between point 1 and 2 '''
+
         R = 6371e3  # Earth radius
 
         lat1 = math.radians(p1[0])

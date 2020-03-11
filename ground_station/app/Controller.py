@@ -5,6 +5,8 @@ from app.Network import *
 from app.Camera import *
 from app.Joystick import *
 from app.View.ControllerWindow import *
+from app.View.Console import *
+
 import json
 import sys
 from queue import *
@@ -15,7 +17,6 @@ import os
 import time
 
 REFRESH_RATE = 100
-ENABLE_JOYSTCK = True
 ENABLE_NETWORK = True
 ENABLE_CAMERA = True
 
@@ -40,24 +41,15 @@ class Controller:
         self.auto_speed = AUTO_SPEED
         self.auto_turning_speed = AUTO_TURNING_SPEED
 
+        self.network = Network(self)
+        self.camera_queue = Queue(30)
+        self.camera = Camera()
+        self.camera.start()
+
         self.mainView = MainView(self.app, self)
 
-        if ENABLE_NETWORK:
-            self.network = Network(self)
-            self.network.connect()
-            print("First update...")
-            self.updateData()
-            print("Done!")
-
-        if ENABLE_JOYSTCK:
-            self.joystick = Joystick(self)
-
-        if ENABLE_CAMERA:
-            self.camera_queue = Queue(30)
-            self.camera = Camera()
-            self.camera.start()
-            self.startVideoStream()
-            self.updateCamera()
+        self.joystick = Joystick(self)
+        self.joystick_enabled = self.joystick.init()
 
         # set default scale value
         self.mainView.getButtons().updateSpeed(SPEED)
@@ -67,8 +59,29 @@ class Controller:
 
         self.mainView.pack()  # let here otherwise crash
 
+        self.console = Console()
+        self.console.println("ROVER GROUND STATION v1.0")
+        self.console.println("www.matteoformentin.com")
+        self.console.println()
+        self.console.println("JOYSTICK ENABLED") if self.joystick_enabled else self.console.println(
+            "JOYSTICK NOT CONNECTED")
+
+        self.app.after(2000, self.initNetwork)
+
     def run(self):
         self.app.mainloop()
+
+    def initNetwork(self):
+        self.console.println("Connecting to Rover...")
+        self.network.connect()
+        self.console.println("Getting data...")
+        self.updateData()
+        self.console.println("Done.")
+        self.console.println("Starting camera stream...")
+        self.startVideoStream()
+        self.updateCamera()
+        self.console.println("Done.")
+        self.console.println()
 
     def on_closing(self):
         # if messagebox.askokcancel("Quit", "Do you want to quit?"):
@@ -91,6 +104,7 @@ class Controller:
             "Connection Error",
             "Please make sure to be connected to the rover Wi-Fi and restart Ground Station"
         )
+        self.console.println("Connection Error")
         self.quitApp()
 
     def showCheckControllerDialog(self):
@@ -108,10 +122,13 @@ class Controller:
     def setSpeed(self, speed):
         self.speed = speed
         self.mainView.getButtons().updateSpeed(self.speed)
+        self.console.println("Speed setted to " + str(self.speed))
 
     def setTurningSpeed(self, speed):
         self.turning_speed = speed
         self.mainView.getButtons().updateTurningSpeed(self.turning_speed)
+        self.console.println("Turning speed setted to " +
+                             str(self.turning_speed))
 
     def setAutoSpeed(self, speed):
         self.auto_speed = speed
@@ -145,7 +162,6 @@ class Controller:
 
         self.network.sendData(json.dumps(data))
         received = self.network.getData()
-        print(received)
 
         if not len(received) == 0:
             data = json.loads(received)
@@ -153,6 +169,45 @@ class Controller:
             self.mainView.updateMotorData(data["motor"], 100)
             self.mainView.updateGPSData(data["gps"])
             self.mainView.updateCompass(data["compass"])
+
+            self.console.clearData()
+            self.console.printData("DATA")
+
+            self.console.printData(
+                "Radar: " + "R" + str(data["radar"][0]) + " C" + str(data["radar"][1]) + " L" + str(data["radar"][2]))
+
+            self.console.printData(
+                "Compass: " + str(data["compass"]))
+
+            self.console.printData("Motors:")
+            self.console.printData(
+                "left_power: " + str(data["motor"]["left_power"]))
+            self.console.printData(
+                "right_power: " + str(data["motor"]["right_power"]))
+            self.console.printData(
+                "left_tick: " + str(data["motor"]["left_tick"]))
+            self.console.printData(
+                "right_tick: " + str(data["motor"]["right_tick"]))
+            self.console.printData(
+                "left_rpm: " + str(data["motor"]["left_rpm"]))
+            self.console.printData(
+                "right_rpm: " + str(data["motor"]["right_rpm"]))
+
+            self.console.printData("GPS:")
+            self.console.printData(
+                "fix: " + str(data["gps"]["fix"]))
+            self.console.printData(
+                "fix_quality: " + str(data["gps"]["fix_quality"]))
+            self.console.printData(
+                "satellites: " + str(data["gps"]["satellites"]))
+            self.console.printData(
+                "latitude: " + str(data["gps"]["latitude"]))
+            self.console.printData(
+                "longitude: " + str(data["gps"]["longitude"]))
+            self.console.printData(
+                "speed: " + str(data["gps"]["speed"]))
+            self.console.printData(
+                "altitude: " + str(data["gps"]["altitude"]))
 
             # self.mainView.getButtons().updateMode(data["mode"])
 
@@ -180,6 +235,7 @@ class Controller:
             ]
         }
 
+        self.console.println("Taking photo...")
         self.network.sendData(json.dumps(data))
         received = self.network.getData()
         b64 = base64.b64decode(received)
@@ -189,8 +245,11 @@ class Controller:
         image = cv2.cvtColor(source, cv2.COLOR_BGR2RGB)
 
         timestr = time.strftime("%Y%m%d-%H%M%S")
+        self.console.println("Saving photo...")
         cv2.imwrite(os.path.expanduser('~') +
                     '/Desktop/photo-' + timestr + '.jpg', image)
+        self.console.println("Done.")
+        self.console.println()
 
     def setRemoteMode(self):
         pass
@@ -221,6 +280,8 @@ class Controller:
         }
 
         self.network.sendData(json.dumps(data))
+        self.console.println("Going Forward...")
+
 
     def goBackward(self):
         data = {
@@ -245,6 +306,8 @@ class Controller:
         }
 
         self.network.sendData(json.dumps(data))
+        self.console.println("Going Backward...")
+
 
     def goLeft(self):
         data = {
@@ -269,6 +332,8 @@ class Controller:
         }
 
         self.network.sendData(json.dumps(data))
+        self.console.println("Turning Left...")
+
 
     def goRight(self):
         data = {
@@ -293,6 +358,8 @@ class Controller:
         }
 
         self.network.sendData(json.dumps(data))
+        self.console.println("Turning Right...")
+
 
     def stop(self):
         data = {
@@ -309,3 +376,4 @@ class Controller:
         }
 
         self.network.sendData(json.dumps(data))
+        self.console.println("Stop")

@@ -4,6 +4,8 @@ import pygame
 class Joystick():
     def __init__(self, controller):
         self.controller = controller
+    
+    def init(self):
         pygame.init()
         pygame.joystick.init()
 
@@ -11,11 +13,12 @@ class Joystick():
 
         if pygame.joystick.get_count() < 1:
             pygame.quit()
-            self.controller.showCheckControllerDialog()
+            return False
 
         else:
             pygame.joystick.Joystick(0).init()
             self.processEvent()
+            return True
 
     def processEvent(self):
         for event in pygame.event.get():

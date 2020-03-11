@@ -26,7 +26,7 @@ class Camera(Thread):
         self.video_stream_status = False
 
     def getIp(self):
-        return socket.gethostbyname(socket.gethostname())
+        return "192.168.0.11"#socket.gethostbyname(socket.getfqdn())
 
     def run(self):
         packets = [None] * 100

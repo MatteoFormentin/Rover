@@ -36,11 +36,10 @@ class Controller:
 
         self.ground_station_ip_address = "0"
 
-
-        print("ROTATING")
+        ''' print("ROTATING")
         while True:
             self.waypoint_navigation.rotateToBearing(self.compass.getBearingNormalized(),
-                                                     180)
+                                                     180)'''
 
         print("ROVER STARTED")
 
