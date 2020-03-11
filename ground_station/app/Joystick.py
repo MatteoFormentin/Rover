@@ -17,7 +17,7 @@ class Joystick():
 
         else:
             pygame.joystick.Joystick(0).init()
-            self.processEvent()
+            self.controller.app.after(3000, self.processEvent)
             return True
 
     def processEvent(self):
@@ -74,5 +74,4 @@ class Joystick():
             speed = 100
         if speed < 50:
             speed = 50
-        print(speed)
         return speed

@@ -59,7 +59,7 @@ class Controller:
 
         self.mainView.pack()  # let here otherwise crash
 
-        self.console = Console()
+        self.console = Console(self)
         self.console.println("ROVER GROUND STATION v1.0")
         self.console.println("www.matteoformentin.com")
         self.console.println()
@@ -122,13 +122,12 @@ class Controller:
     def setSpeed(self, speed):
         self.speed = speed
         self.mainView.getButtons().updateSpeed(self.speed)
-        self.console.println("Speed setted to " + str(self.speed))
+        #self.console.println("Speed setted to " + str(self.speed))
 
     def setTurningSpeed(self, speed):
         self.turning_speed = speed
         self.mainView.getButtons().updateTurningSpeed(self.turning_speed)
-        self.console.println("Turning speed setted to " +
-                             str(self.turning_speed))
+        #self.console.println("Turning speed setted to " +str(self.turning_speed))
 
     def setAutoSpeed(self, speed):
         self.auto_speed = speed
@@ -151,6 +150,20 @@ class Controller:
         return self.auto_turning_speed
 
     # COMMAND SEND
+    def sendCommand(self, command, value):
+        data = {
+            'commands': [
+                {
+                    'command': command,
+                    'value': int(value)
+                }
+            ]
+        }
+
+        self.network.sendData(json.dumps(data))
+        self.console.println("Sended Manual Command: " +
+                             str(command) + " " + str(value))
+
     def updateData(self):
         data = {
             'commands': [
@@ -170,8 +183,10 @@ class Controller:
             self.mainView.updateGPSData(data["gps"])
             self.mainView.updateCompass(data["compass"])
 
+            #LOG DATA TO CONSOLE
             self.console.clearData()
-            self.console.printData("DATA")
+            self.console.printData(
+                "DATA " + str(time.strftime("%Y/%m/%d-%H:%M:%S")))
 
             self.console.printData(
                 "Radar: " + "R" + str(data["radar"][0]) + " C" + str(data["radar"][1]) + " L" + str(data["radar"][2]))
@@ -217,7 +232,20 @@ class Controller:
         data = {
             'commands': [
                 {
-                    'command': 'C_Stream_S',
+                    'command': 'C_Stream_Start',
+                    'value': self.camera.getIp()
+                }
+            ]
+        }
+
+        self.network.sendData(json.dumps(data))
+        self.camera.startVideoStream()
+    
+    def stopVideoStream(self):
+        data = {
+            'commands': [
+                {
+                    'command': 'C_Stream_Stop',
                     'value': self.camera.getIp()
                 }
             ]

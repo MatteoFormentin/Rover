@@ -2,7 +2,6 @@ from controller import *
 
 
 def main(argv=None):
-    print("INIT MAIN")
     application = Controller()
     application.run()
 

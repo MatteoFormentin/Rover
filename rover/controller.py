@@ -1,4 +1,4 @@
-from motor import *
+from Motor.motor import *
 from network import *
 from camera import *
 from queue import *
@@ -56,11 +56,14 @@ class Controller:
                             self.network.sendData(self.collectAllData())
 
                         # CAMERA STREAM COMMANDS
-                        if c['command'] == 'C_Stream_S':
+                        if c['command'] == 'C_Stream_Start':
                             self.ground_station_ip_address = c['value']
                             self.camera.setGroundStationIpAddress(
                                 self.ground_station_ip_address)
                             self.camera.startVideoStream()
+
+                        if c['command'] == 'C_Stream_Stop':
+                            self.camera.stopVideoStream()
 
                         if c['command'] == 'C_Take_Photo':
                             img_encoded = self.camera.takePhoto()
@@ -80,9 +83,9 @@ class Controller:
                             self.motor.setLeftMotorSpeed(c['value'])
 
                 # HERE ALL SENSORS LOOPS
+                #self.motor.update()
                 self.gps.update()
                 self.radar.update()
-                self.motor.tickCounterUpdate()
 
             except KeyboardInterrupt:
                 self.motor.handleShutdown()
