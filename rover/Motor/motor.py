@@ -45,7 +45,6 @@ class Motor:
 
         #self.motorPID = PID(2, 2, 0, 0, 100)
 
-
     '''def update(self):
         rpm_avg = int((self.enc.left_rpm + self.enc.left_rpm) / 2)
         speed = self.motorPID.computeOutput(
@@ -93,8 +92,6 @@ class Motor:
         if dir == 1:
             GPIO.output(LEFT_IN3, 0)
             GPIO.output(LEFT_IN4, 1)
-
-  
 
     def setRightMotorSpeed(self, speed):
         if speed - COMP_SPEED_R > STALL_SPEED:

@@ -9,7 +9,7 @@ point = [0, 0]  # lat, lon
 
 class Waypoint:
     def __init__(self, motor, gps, compass):
-        self.rotationPID = PID(0.8, 0, 0, -100, 100)
+        self.rotationPID = PID(2, 0, 0, -100, 100)
         self.distancePID = PID(0.2, 0.1, 0, 0, 100)
 
         self.run = False
@@ -19,7 +19,7 @@ class Waypoint:
         self.compass = compass
 
         self.waypoints = []
-        self.current_point = 0
+        self.current_position = 0
         self.current_waypoint_index = 0  # Waipoint Array Index
 
     def update(self):
@@ -30,34 +30,50 @@ class Waypoint:
             self.motor.motorStop()
             return
 
-        self.current_point = self.gps.getCurrentPoint()
+        self.current_position = self.gps.getCurrentPoint()
 
-        next_point = self.waypoints[self.current_waypoint_index]
+        try:
+            next_point = self.waypoints[self.current_waypoint_index]
+        except Exception:
+            print("no more point to reach!")
+            self.run = False
+            return
 
         # Calculate bearing from next point
-        dest_bearing = computeBearing(self.current_point, next_point)
+        dest_bearing = self.computeBearing(self.current_position, next_point)
         curr_bearing = self.compass.getBearing()
+        print("bearing to dest: " + str(dest_bearing) +
+              " curr bearing: " + str(curr_bearing))
 
         # Calculate distance from next point
-        distance_to_dest = self.computeDistance(self.current_point, next_point)
+        distance_to_dest = self.computeDistance(
+            self.current_position, next_point)
+        print("distance to dest: " + str(distance_to_dest))
 
         # If destination reached
         if distance_to_dest < 1:
             self.current_waypoint_index += 1
+            print("destionation reached")
 
         # If bearing of rover is wrong rotate to correct
-        elif dest_bearing != curr_bearing:  # +- offeset
-            speed = self.rotationPID.computeOutput(curr_bearing, dest_bearing)
+        # +- offeset
+        elif dest_bearing != curr_bearing and (dest_bearing >= 2 + curr_bearing or dest_bearing <= curr_bearing - 2):
+            '''speed = self.rotationPID.computeOutput(curr_bearing, dest_bearing)
             if speed < 0:
                 self.motor.rotateLeft(speed)
+                print("rotating left")
 
             if speed > 0:
                 self.motor.rotateRight(speed)
+                print("rotating right")'''
+            self.motor.rotateRight(30)
 
         # If correct bearing is correct and destination is far go forward
         else:
             speed = self.distancePID.computeOutput(distance_to_dest, 0)
-            self.motor.goForward(speed)
+            self.motor.goForward(100)
+            print("going forward")
+        print()
 
     def setRun(self, status):
         if status == True:
@@ -68,7 +84,7 @@ class Waypoint:
     def addWaypoints(self, w):
         self.waypoints += w
 
-    def addWaipoint(self, point):
+    def addWaypoint(self, point):
         self.waypoints.append(point)
 
     # DEBUG ONLY
@@ -115,7 +131,7 @@ class Waypoint:
         if brng > 180:
             brng -= 360
 
-        return brng
+        return int(brng)
 
     def computeDistance(self, p1, p2):
         ''' Compute DISTANCE between point 1 and 2 '''
@@ -136,4 +152,4 @@ class Waypoint:
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
 
         d = R * c
-        return d
+        return int(d)

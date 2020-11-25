@@ -2,7 +2,6 @@ import RPi.GPIO as GPIO
 from threading import Thread
 import time
 
-
 LEFT_ENCODER = 25
 RIGHT_ENCODER = 8
 
@@ -45,12 +44,13 @@ class Encoder(Thread):
 
             delta = time.time() - self.last_reset
             if delta > 0.1:
-
                 # 50 tick / round
-                self.right_rpm = int(((self.right_tick -
-                                   self.previous_right_tick) / delta) * (60/75))
-                self.left_rpm = int(((self.left_tick -
-                                  self.previous_left_tick) / delta) * (60/75))
+                self.right_rpm = int(
+                    ((self.right_tick - self.previous_right_tick) / delta) *
+                    (60 / 75))
+                self.left_rpm = int(
+                    ((self.left_tick - self.previous_left_tick) / delta) *
+                    (60 / 75))
 
                 self.previous_left_tick = self.left_tick
                 self.previous_right_tick = self.right_tick

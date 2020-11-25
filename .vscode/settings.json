@@ -1,5 +1,8 @@
 {
-    "python.pythonPath": "/usr/local/bin/python3",
-    "python.autoComplete.extraPaths": ["${workspaceFolder}/ground_station/"]
+    "python.pythonPath": "/Users/matteo/opt/anaconda3/envs/MLCompute/bin/python",
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/ground_station/"
+    ],
+    "python.formatting.provider": "yapf"
 
 }

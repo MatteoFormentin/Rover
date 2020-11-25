@@ -32,9 +32,12 @@ class Controller:
         self.camera.start()
 
         # WAYPOINT NAVIGATION CONTROLLER
-        self.waypoint_navigation = Waypoint(self.motor, self.gps, self.compass)
+       # self.waypoint_navigation = Waypoint(self.motor, self.gps, self.compass)
 
         self.ground_station_ip_address = "0"
+
+        #self.waypoint_navigation.addWaypoint([45.6327, 8.8289])
+       # self.waypoint_navigation.setRun(True)
 
         ''' print("ROTATING")
         while True:
@@ -84,6 +87,7 @@ class Controller:
 
                 # HERE ALL SENSORS LOOPS
                 #self.motor.update()
+                self.waypoint_navigation.update()
                 self.gps.update()
                 self.radar.update()
 
